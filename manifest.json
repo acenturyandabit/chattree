@@ -9,7 +9,8 @@
             ],
             "js": [
                 "core.js",
-                "helloworld.js"
+                "helloworld.js",
+                "getid.js"
             ]
         }
     ]
