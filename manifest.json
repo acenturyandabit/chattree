@@ -8,7 +8,8 @@
                 "*://www.messenger.com/t/*"
             ],
             "js": [
-                "helloworld.js"
+                "helloworld.js",
+                "getid.js"
             ]
         }
     ]
