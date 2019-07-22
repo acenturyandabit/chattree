@@ -8,6 +8,7 @@
                 "*://www.messenger.com/t/*"
             ],
             "js": [
+                "core.js",
                 "helloworld.js"
             ]
         }
