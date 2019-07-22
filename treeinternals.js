@@ -1,7 +1,7 @@
 var chattreedata = {};
-//var nodes = 
 var i = 1;
-var msgArray = [];
+var nodes = [];
+var connections = [];
 
 function addmsg(txt,chat,from) {
     if (chattreedata[chat] == undefined){
@@ -18,7 +18,7 @@ function addmsg(txt,chat,from) {
         }
     if (i == 1){
         var root = chattreedata[chat][from]["message"+i];
-        msgArray.push(root);
+        nodes.push(root);
         }
     i += 1;
     if (txt.indexOf("?") != -1){ // msg is a question
