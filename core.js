@@ -82,6 +82,7 @@ function _chatTreeCore() {
         winds.win.style.top = "50%";
         winds.win.style.left = "50%";
         winds.win.style.resize = "both";
+        winds.win.style.overflow = "auto";
         winds.topbar.style.height="10px";
         winds.topbar.style.width="100%";
         winds.topbar.style.background="blue";
