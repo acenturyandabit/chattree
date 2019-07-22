@@ -8,7 +8,8 @@
                 "*://www.messenger.com/t/*"
             ],
             "js": [
-                "helloworld.js",
+                "core.js",
+                "treemodule.js",
                 "getid.js"
             ]
         }
