@@ -1,6 +1,5 @@
-//pathname as the user ID
 function whoIam(){
-
+  //LATER
 
 }
 

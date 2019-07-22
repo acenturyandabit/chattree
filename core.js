@@ -43,6 +43,19 @@ function addEventAPI(itm) {
     }
 }
 
+function htmlwrap(html, el) {
+    let d = document.createElement(el || 'div');
+    d.innerHTML = html;
+    if (d.children.length == 1) return d.children[0];
+    else return d;
+}
+function UIsidebar(pid){
+  var lastbutton=document.querySelector("._1li_");
+  lastbutton.appendChild(htmlwrap('<div class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">Chat Tree</div></div>'));
+  clearInterval(pid);
+}
+
+
 function _chatTreeCore() {
     this.availableModules = {};
     this.activeModules = [];
@@ -65,8 +78,12 @@ function _chatTreeCore() {
     }
     this.loadModule = function (moduleName) {
         if (!this.availableModules[moduleName]) throw ("Module does not exist!");
-        //append the sidebar switch 
+        //append the sidebar switch
         //--christie--
+        var pid;
+        pid=setInterval(()=>UIsidebar(pid),300);
+
+
 
         //create a window for it.
         let win = document.createElement("div");
@@ -96,7 +113,7 @@ function _chatTreeCore() {
         });
         winds.win.parentElement.addEventListener("mouseup", (e) => {winds.moving=false;});
         this.activeModules.push(new this.availableModules[moduleName].fn(this, winds.win));
-        
+
     }
 
 }
