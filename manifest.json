@@ -9,7 +9,7 @@
             ],
             "js": [
                 "core.js",
-                "helloworld.js",
+                "treemodule.js",
                 "getid.js"
             ]
         }
