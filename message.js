@@ -1,13 +1,13 @@
 // Message Class (through function prototype)
 function _message() {
-    this.id = null;
-    this.chatId = null;
-    this.senderId = null; //TODO figure out how identically named users are handled.
-    this.sender = null;
-    this.date = null;
-    this.content = null;
+    this.id = undefined;
+    this.chatId = undefined;
+    this.senderId = undefined; //TODO figure out how identically named users are handled.
+    this.sender = undefined;
+    this.date = undefined;
+    this.content = undefined;
     this.reactions = {'love':0,'laugh':0,'wow':0,'angry':0,'sad':0,'like':0,'dislike':0};
-    this.reply = null;
+    this.reply = undefined;
     // Add more attributes
 
     this.toString = function(){
@@ -16,6 +16,7 @@ function _message() {
             + "\nContents:\n" + this.content;
     }
 }
+
 
 /**
  * 
@@ -65,10 +66,19 @@ function collectMessages() {
                     
                     // TODO: Replies, Reactions etc
 
-                    // FIXME: Add message to data tree here!!!
+                    addMsg(messageObject);
                     console.log(messageObject.toString());
                 }
             }    
         }
     }
+}
+
+/**
+ * 
+ * Collects new messages
+ * 
+ */
+function refreshMessages() {
+
 }

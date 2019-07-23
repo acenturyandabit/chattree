@@ -10,7 +10,8 @@
             "js": [
                 "core.js",
                 "treemodule.js",
-                "getid.js"
+                "getid.js",
+                "message.js"
             ]
         }
     ]
