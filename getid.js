@@ -6,5 +6,5 @@ function whoIam(){
 
 function whoIamTalkingto(){
   var url=window.location.pathname;
-  return url;
+  return url.slice(3);
 }
