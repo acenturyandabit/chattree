@@ -84,34 +84,37 @@ function _chatTreeCore() {
         let close_btn = document.createElement("div");
         let winds = {
             win: document.createElement("div"),
-            topbar:document.createElement("div"),
+            topbar: document.createElement("div"),
             close_btn: document.createElement("div"),
-            resize_btn:document.createElement("div"),
+            resize_btn: document.createElement("div"),
             moving: false
         }
-        winds.resize_btn.style.height = "10px";
-        winds.resize_btn.style.width= "10px";
-        winds.resize_btn.style.background="green";
-        winds.close_btn.style.height = "10px";
-        winds.close_btn.style.width= "10px";
-        winds.close_btn.style.background="red";
-        winds.resize_btn.style.cssFloat= "right";
-          winds.close_btn.style.cssFloat= "right";
+        winds.resize_btn.style.height = "15px";
+        winds.resize_btn.style.width = "15px";
+        winds.resize_btn.style.background = "green";
+        winds.close_btn.style.height = "15px";
+        winds.close_btn.style.width = "15px";
+        winds.close_btn.style.background = "red";
+        winds.resize_btn.style.cssFloat = "right";
+        winds.close_btn.style.cssFloat = "right";
         winds.topbar.appendChild(winds.resize_btn);
         winds.topbar.appendChild(winds.close_btn);
 
 
         winds.win.style.position = "absolute";
-        winds.win.style.background = "pink";
+        winds.win.style.background = "white";
         winds.win.style.width = "200px";
         winds.win.style.height = "200px";
         winds.win.style.top = "50%";
         winds.win.style.left = "50%";
         winds.win.style.resize = "both";
         winds.win.style.overflow = "auto";
-        winds.topbar.style.height="10px";
-        winds.topbar.style.width="100%";
-        winds.topbar.style.background="blue";
+        winds.win.style.borderRadius = "7px";
+        winds.win.style.border = "solid 1px grey";
+        winds.win.style.zIndex = 10;
+        winds.topbar.style.height = "15px";
+        winds.topbar.style.width = "100%";
+        winds.topbar.style.background = "blue";
         winds.win.appendChild(winds.topbar);
         winds.win.addEventListener("mousedown", (e) => { if (e.target == winds.topbar) winds.moving = { dx: winds.win.offsetLeft - e.pageX, dy: winds.win.offsetTop - e.pageY } });
         document.body.appendChild(winds.win);
@@ -121,37 +124,59 @@ function _chatTreeCore() {
                 winds.win.style.top = e.pageY + winds.moving.dy + "px";
             }
         });
-        winds.win.parentElement.addEventListener("mouseup", (e) => {winds.moving=false;});
+        winds.win.parentElement.addEventListener("mouseup", (e) => { winds.moving = false; });
 
 
         //create button
-        var i=0;
+        var i = 0;
         var UIclearsidebutton;
-        var UIsidebutton=htmlwrap('<div id="chat_tree_btn" class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">Chat Tree</div></div>');
-        UIsidebutton.addEventListener("click",UIshowwindow);
+        var UIsidebutton = htmlwrap('<div id="chat_tree_btn" class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">Chat Tree</div></div>');
+        UIsidebutton.addEventListener("click", UIshowwindow);
 
-        function UIsidebar(pid){
-          console.log(i);
-          var lastbutton=document.querySelector("._1li_");
-          if(i==0){lastbutton.appendChild(UIsidebutton);}
-          if(i>0){console.log("i>0");UIsidebutton.remove(); lastbutton.appendChild(UIsidebutton);}
-          i++;
+        function UIsidebar(pid) {
+            var lastbutton = document.querySelector("._1li_");
+            if (i == 0) {
+                try {
+                    lastbutton.appendChild(UIsidebutton);
+                    i++;
+                }
+                catch (e) {
+                    console.log("The rest of the document is not ready yet :(")
+                }
+            }
+            if (i > 0) {UIsidebutton.remove(); lastbutton.appendChild(UIsidebutton); }
+
         }
 
         //UI side button
-        var pid=setInterval(()=>UIsidebar(pid),300);
+        var pid = setInterval(() => UIsidebar(pid), 300);
 
         //window visibility
-        var window_status=0;//By default, the window is visible=0
-        function UIshowwindow(){
-          if(window_status==0){winds.win.style.visibility='hidden';  window_status=1;}
-          else{winds.win.style.visibility='visible';window_status=0;}
+        var window_status = 0;//By default, the window is visible=0
+        function UIshowwindow() {
+            if (window_status == 0) { winds.win.style.visibility = 'hidden'; window_status = 1; }
+            else { winds.win.style.visibility = 'visible'; window_status = 0; }
         }
-
-        this.activeModules.push(new this.availableModules[moduleName].fn(this, winds.win));
+        winds.inner = document.createElement("div");
+        winds.inner.style.height = "calc(100% - 18px)";//oddly specific i know
+        winds.inner.style.width = "100%";
+        winds.win.appendChild(winds.inner);
+        this.activeModules.push(new this.availableModules[moduleName].fn(this, winds.inner));
 
     }
 
 }
 
 let chatTreeCore = new _chatTreeCore();
+
+
+
+//Detect when the window url has changed, and fire an event in the core when this happens
+var preURL="";
+setInterval(()=>{
+    if (window.location.href!=preURL){
+        preURL=window.location.href;
+        chatTreeCore.fire("urlChange",preURL);        
+    }
+},300)
+
