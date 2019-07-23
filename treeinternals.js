@@ -32,3 +32,8 @@ function addMsg(msg) {
 
 
 }
+
+
+function retrieveTree(id){
+    return chattreedata[id];
+}

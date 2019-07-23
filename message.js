@@ -68,7 +68,7 @@ function collectMessages() {
 
                     // TODO: Replies, Reactions etc
 
-                    addMsg(messageObject);
+                    //addMsg(messageObject);
                     console.log(messageObject.toString());
                 }
             }    
