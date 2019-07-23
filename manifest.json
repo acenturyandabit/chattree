@@ -1,13 +1,16 @@
 {
     "manifest_version": 2,
     "name": "Chat tree",
-    "version": "0.1",
+    "version": "0.2",
+    "description": "Visualise your chat as a tree in messenger.",
     "content_scripts": [
         {
             "matches": [
-                "*://www.messenger.com/t/*"
+                "*://www.messenger.com/t/*",
+                "*://www.facebook.com/messages/t/*"
             ],
             "js": [
+                "3pt/svg.min.js",
                 "core.js",
                 "treemodule.js",
                 "getid.js"

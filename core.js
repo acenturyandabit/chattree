@@ -96,6 +96,7 @@ function _chatTreeCore() {
             }
         });
         winds.win.parentElement.addEventListener("mouseup", (e) => {winds.moving=false;});
+        winds.controller=
         this.activeModules.push(new this.availableModules[moduleName].fn(this, winds.win));
         
     }
