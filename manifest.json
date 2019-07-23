@@ -11,9 +11,11 @@
             ],
             "js": [
                 "3pt/svg.min.js",
+                "JQ.js",
                 "core.js",
                 "treemodule.js",
-                "getid.js"
+                "getid.js",
+                "message.js"
             ]
         }
     ]
