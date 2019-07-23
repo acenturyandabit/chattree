@@ -80,25 +80,25 @@ function _chatTreeCore() {
 
         //create a window for it.
         let win = document.createElement("div");
-        let resize_btn = document.createElement("div");
         let close_btn = document.createElement("div");
+        let resize_btn = document.createElement("div");
         let winds = {
             win: document.createElement("div"),
             topbar:document.createElement("div"),
-            close_btn: document.createElement("div"),
-            resize_btn:document.createElement("div"),
+            close_btn:document.createElement("div"),
+            resize_btn: document.createElement("div"),
             moving: false
         }
-        winds.resize_btn.style.height = "10px";
-        winds.resize_btn.style.width= "10px";
-        winds.resize_btn.style.background="green";
         winds.close_btn.style.height = "10px";
         winds.close_btn.style.width= "10px";
-        winds.close_btn.style.background="red";
+        winds.resize_btn.style.background="green";
+        winds.resize_btn.style.height = "10px";
+        winds.resize_btn.style.width= "10px";
         winds.resize_btn.style.cssFloat= "right";
-          winds.close_btn.style.cssFloat= "right";
-        winds.topbar.appendChild(winds.resize_btn);
+        winds.close_btn.style.background="red";
+        winds.close_btn.style.cssFloat= "right";
         winds.topbar.appendChild(winds.close_btn);
+        winds.topbar.appendChild(winds.resize_btn);
 
 
         winds.win.style.position = "absolute";
