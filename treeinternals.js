@@ -3,7 +3,12 @@ var i = 1;
 var nodes = [];
 var connections = [];
 
-function addmsg(txt,chat,from) {
+function addMsg(msg) {
+    
+    let txt = msg.content;
+    let chat = msg.chatId;
+    let from = msg.sender;
+
     if (chattreedata[chat] == undefined){
         chattreedata[chat] = {};
     }
