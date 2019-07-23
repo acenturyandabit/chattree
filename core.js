@@ -49,11 +49,9 @@ function htmlwrap(html, el) {
     if (d.children.length == 1) return d.children[0];
     else return d;
 }
-function UIsidebar(pid){
-  var lastbutton=document.querySelector("._1li_");
-  lastbutton.appendChild(htmlwrap('<div class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">Chat Tree</div></div>'));
-  clearInterval(pid);
-}
+
+
+
 
 
 function _chatTreeCore() {
@@ -78,20 +76,31 @@ function _chatTreeCore() {
     }
     this.loadModule = function (moduleName) {
         if (!this.availableModules[moduleName]) throw ("Module does not exist!");
-        //append the sidebar switch
-        //--christie--
-        var pid;
-        pid=setInterval(()=>UIsidebar(pid),300);
-
 
 
         //create a window for it.
         let win = document.createElement("div");
+        let resize_btn = document.createElement("div");
+        let close_btn = document.createElement("div");
         let winds = {
             win: document.createElement("div"),
             topbar:document.createElement("div"),
+            close_btn: document.createElement("div"),
+            resize_btn:document.createElement("div"),
             moving: false
         }
+        winds.resize_btn.style.height = "10px";
+        winds.resize_btn.style.width= "10px";
+        winds.resize_btn.style.background="green";
+        winds.close_btn.style.height = "10px";
+        winds.close_btn.style.width= "10px";
+        winds.close_btn.style.background="red";
+        winds.resize_btn.style.cssFloat= "right";
+          winds.close_btn.style.cssFloat= "right";
+        winds.topbar.appendChild(winds.resize_btn);
+        winds.topbar.appendChild(winds.close_btn);
+
+
         winds.win.style.position = "absolute";
         winds.win.style.background = "pink";
         winds.win.style.width = "200px";
@@ -113,9 +122,36 @@ function _chatTreeCore() {
             }
         });
         winds.win.parentElement.addEventListener("mouseup", (e) => {winds.moving=false;});
+
+
+        //create button
+        var i=0;
+        var UIclearsidebutton;
+        var UIsidebutton=htmlwrap('<div id="chat_tree_btn" class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">Chat Tree</div></div>');
+        UIsidebutton.addEventListener("click",UIshowwindow);
+
+        function UIsidebar(pid){
+          console.log(i);
+          var lastbutton=document.querySelector("._1li_");
+          if(i==0){lastbutton.appendChild(UIsidebutton);}
+          if(i>0){console.log("i>0");UIsidebutton.remove(); lastbutton.appendChild(UIsidebutton);}
+          i++;
+        }
+
+        //UI side button
+        var pid=setInterval(()=>UIsidebar(pid),300);
+
+        //window visibility
+        var window_status=0;//By default, the window is visible=0
+        function UIshowwindow(){
+          if(window_status==0){winds.win.style.visibility='hidden';  window_status=1;}
+          else{winds.win.style.visibility='visible';window_status=0;}
+        }
+
         this.activeModules.push(new this.availableModules[moduleName].fn(this, winds.win));
 
     }
 
 }
+
 let chatTreeCore = new _chatTreeCore();
