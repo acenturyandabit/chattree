@@ -61,9 +61,11 @@ function collectMessages() {
 
                     if (messages[m].getElementsByClassName("_aok").length > 0)
                         messageObject.content = messages[m].getElementsByClassName("_aok")[0].getAttribute("aria-label");
-                
-                    messageObject.date = messages[m].getElementsByClassName("_hh7")[0].getAttribute("data-tooltip-content");
-                    
+            
+                    if (messages[m].getElementsByClassName("_hh7").length > 0)
+                        messageObject.date = messages[m].getElementsByClassName("_hh7")[0].getAttribute("data-tooltip-content");
+                        // Videos do not have dates?
+
                     // TODO: Replies, Reactions etc
 
                     //addMsg(messageObject);
@@ -80,5 +82,13 @@ function collectMessages() {
  * 
  */
 function refreshMessages() {
+    let target = document.querySelector("[aria-label='Messages']").querySelector("[id]");
+
+    let observeNewMessages = new MutationObserver(function(mutationList, observer) {
+        // Do stuff - load new messages
+        console.log(mutationList);
+    });
+    observeNewMessages.observe(target,{subtree:true,childList:true});
+
 
 }

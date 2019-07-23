@@ -26,7 +26,7 @@ function addMsg(msg) {
         nodes.push(root);
         }
     i += 1;
-    if (txt.indexOf("?") != -1){ // msg is a question
+    if (txt != undefined && txt.indexOf("?") != -1){ // msg is a question
 
     }
 

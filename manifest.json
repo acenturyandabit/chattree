@@ -15,6 +15,7 @@
                 "core.js",
                 "treemodule.js",
                 "getid.js",
+                "treeinternals.js",
                 "message.js"
             ]
         }
