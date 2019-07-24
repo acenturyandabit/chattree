@@ -25,13 +25,18 @@ function _message() {
  */
 function collectMessages() {
 
+    let chatId = whoIamTalkingto();
+
     let messagesScrape = document.querySelector("[aria-label='Messages']").querySelector("[id]").children;
     let dateCounter = 0;    // To keep track of dates
     let idCounter = 0;
 
+    // First decide whether first scrape or not
+    
+
     // Loop through message groups. Note that Messenger orders starting index as top, oldest message loaded.
     // Message groups are 'blobs' of messages sent by the same person in a small timeframe
-    for (let i = messagesScrape.length - 1; i >= 0; i--) {
+    for (let i = 0; i < messagesScrape.length; i++) {
 
         let messageGroup = messagesScrape[i];
         // TODO handle H4 elements to find date and time.
@@ -46,7 +51,10 @@ function collectMessages() {
             // Loop through each message of a message group
             let messages = messageGroup.getElementsByClassName("_41ud")[0].children;
 
-            for (let m = messages.length - 1; m >= 0; m--) {
+            for (let m = 0; m < messages.length; m++) {
+
+                if (whoIamTalkingto() !== chatId) return;   // Make sure chat still current
+
                 // TODO: Check that _aok class doesn't change after refresh etc
                 //  Images and Stickers use classes apart from _aok
                 //  aria-label seems to always contain the text of the messages */ 
@@ -56,7 +64,7 @@ function collectMessages() {
                     let messageObject = new _message();
 
                     messageObject.id = idCounter++;
-                    messageObject.chatId = whoIamTalkingto();
+                    messageObject.chatId = chatId;
                     messageObject.sender = messageSender;
 
                     if (messages[m].getElementsByClassName("_aok").length > 0)
@@ -93,6 +101,10 @@ function refreshMessages() {
 
 }
 
+function pushCache(chatId) {
+
+}
+
 /**
  * Section to call the collection function when we switch users; and store messages
  * 
@@ -103,7 +115,9 @@ chatTreeCore.on("urlChange", () => {
     //so keep doing it until we don't get the error
     function f() {
         try {
-            messageCache[whoIamTalkingto()] = collectMessages();
+            let chatId = whoIamTalkingto();
+            messageCache[chatId] = collectMessages();
+            //pushCache(chatId);
         } catch (e) {
             setTimeout(f, 100);
         }
