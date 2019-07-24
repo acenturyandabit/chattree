@@ -196,7 +196,7 @@ function _chatTreeCore() {
           }
         }
         winds.inner = document.createElement("div");
-        winds.inner.style.height = "calc(100% - 18px)";//oddly specific i know
+        winds.inner.style.height = "calc(100% - 25px)";//oddly specific i know
         winds.inner.style.overflow = "auto";
         winds.inner.style.width = "100%";
         winds.win.appendChild(winds.inner);

@@ -49,7 +49,22 @@ chatTreeCore.on("message", (msg) => {
 
 function createLinearTree(thread) {
     let messages = messageCache[thread];
+    let preID;
     for (let i in messages) {
-        console.log(i.toString());
+        //add it as a node
+        if (preID)messages[i].parent=preID;
+        preID=messages[i].id;
     }
+    return messages;
+}
+
+function createRandomTree(thread) {
+    let messages = messageCache[thread];
+    let preIDs=[];
+    for (let i in messages) {
+        //add it as a node
+        messages[i].parent=preIDs[Math.floor(Math.random()*preIDs.length)];
+        preIDs.push(messages[i].id);
+    }
+    return tree;
 }

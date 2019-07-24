@@ -1,11 +1,14 @@
 //test function to randomly make trees
 function makeTree() {
-    let linklist = [];
+    let nodes = {};
     for (let i = 0; i < 26; i++) {
+        let nd=String.fromCharCode(97 + i);
+        nodes[nd]={};
         let prnt = Math.floor(Math.random() * i);
-        linklist.push({ start: String.fromCharCode(97 + prnt), end: String.fromCharCode(97 + i) });
+        nodes[nd].content=String.fromCharCode(97 + i);
+        nodes[nd].parent=String.fromCharCode(97 + prnt);
     }
-    return linklist;
+    return nodes;
 }
 
 chatTreeCore.registerModule("tree",{
@@ -41,28 +44,20 @@ chatTreeCore.registerModule("tree",{
         oldViewBox = svgCanvas.viewbox();
         svgCanvas.viewbox(oldViewBox.x - oldViewBox.width * _del, oldViewBox.y - oldViewBox.height * _del, oldViewBox.width * (1 + _del * 2), oldViewBox.height * (1 + _del * 2));
     });
-    this.render = function (tree) {
+    this.render = function (abstractedNodes) {
         svgCanvas.clear();
-        let nodes = tree.nodes;
-        let links = tree.links;
-        let abstractedNodes = {};
-        //add 'ghost links' for ease of use
-        for (let i = 0; i < links.length; i++) {
-            if (!nodes[links[i].start]) nodes[links[i].start] = links[i].start;
-            if (!nodes[links[i].end]) nodes[links[i].end] = links[i].end;
-        }
         //determine which layers each element is on
-        for (let i in nodes) {
-            abstractedNodes[i] = { parent: i, children: [] };
+        for (let i in abstractedNodes) {
+            if (!abstractedNodes[i].parent)abstractedNodes[i].parent=i;
+            abstractedNodes[i].children=[];
         }
-        for (let i = 0; i < links.length; i++) {
-            if (links[i].start == links[i].end) continue;//discard self links.
-            abstractedNodes[links[i].end].parent = links[i].start;
-            abstractedNodes[links[i].start].children.push(links[i].end);
+        //process 'links'
+        for (let i in abstractedNodes) {
+            if (abstractedNodes[i].parent!=i)abstractedNodes[abstractedNodes[i].parent].children.push(i);
         }
         let maxDepth = 0;
         let roots = {};
-        for (let i in nodes) {
+        for (let i in abstractedNodes) {
             let currentNode = i;
             let depth = 0;
             while (abstractedNodes[currentNode].parent != currentNode) {
@@ -110,7 +105,8 @@ chatTreeCore.registerModule("tree",{
                 return abstractedNodeArray[refIndexes.indexOf(i)];
             });
             let placeX = 0;
-            currentElement.estimatedWidth = 0;
+            let text=currentElement.groupElement.text((abstractedNodes[currentElement.key].content || currentElement.key).toString()).cy(0).stroke("white").size(10);
+            currentElement.estimatedWidth = text.bbox().w+10;
             if (children.length) {
                 //add the elements to a group
                 currentElement.estimatedWidth = 0;
@@ -126,19 +122,18 @@ chatTreeCore.registerModule("tree",{
                     currentElement.estimatedWidth += v.estimatedWidth;
                 })
                 //calculate the average position of the childElements
-                if (currentElement.estimatedWidth < width) currentElement.estimatedWidth = width;
                 placeX = currentElement.estimatedWidth / 2;
                 //add some lines
                 children.forEach((v, i) => {
                     currentElement.groupElement.line(v.tmpcwx, vspacing-height/2, placeX, 0).back().stroke({ color: "black", width: 2 });
                 })
             }
-            if (currentElement.estimatedWidth < width) currentElement.estimatedWidth = width;
+            //create the text and calculate the width of it.
             placeX = currentElement.estimatedWidth / 2;
             //create a box for it
-            currentElement.groupElement.rect(width, height).cx(placeX).cy(0).fill("blue");
+            currentElement.groupElement.rect(text.bbox().w+10, height).cx(placeX).cy(0).fill("blue");
+            text.cx(placeX).front();
             //Create some text in the box
-            currentElement.groupElement.text((nodes[currentElement.key] || currentElement.key).toString()).cx(placeX).cy(0).stroke("white");
         }
         abstractedNodeArray.forEach((v, i) => { renderItem(i) });
         //finally add each group to a big tree to lay out all root nodes
@@ -158,12 +153,15 @@ chatTreeCore.registerModule("tree",{
         });
     }
 
-    chatTreeCore.on("urlChange", () => {
+    this.update=function(msg){
+        //update an existing message
 
-        this.render({
-            nodes: {},
-            links: makeTree()
-        });
+        //attach it to its parent
+    }
+    chatTreeCore.on("afterRefreshMessages", () => {
+        //get the 
+        //this.render(createLinearTree(whoIamTalkingto()));
+        this.render(makeTree());
         /*
         this.render(retrieveTree(whoIamTalkingto()));
         */
