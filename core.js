@@ -122,7 +122,12 @@ function _chatTreeCore() {
         });
         winds.win.parentElement.addEventListener("mouseup", (e) => {winds.moving=false;});
 
-
+        var title=htmlwrap(`<div id="chat_tree_header" tabindex="0"><div>${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
+        title.style.color="white";
+        title.style.height="15px";
+        title.style.marginTop="0px";
+        winds.topbar.appendChild(title);
+        winds.win.style.zIndex="100";
         //create button
         var i=0;
         var UIclearsidebutton;
@@ -145,12 +150,12 @@ function _chatTreeCore() {
         }
 
         //UI side button
-        var pid=setInterval(()=>UIsidebar(pid),300);
+        var pid = setInterval(() => UIsidebar(pid),300);
         //window visibility
-        var window_status=0;//By default, the window is visible=0
+        var window_status = 0;//By default, the window is visible=0
         function UIshowwindow(){
-          if(window_status==0){winds.win.style.visibility='hidden';  window_status=1;}
-          else{winds.win.style.visibility='visible';window_status=0;}
+          if(window_status == 0){winds.win.style.visibility='hidden';  window_status=1;}
+          else{ winds.win.style.visibility='visible'; window_status=0;}
         }
         //maximise window
         var originalwindow_height;
@@ -159,22 +164,21 @@ function _chatTreeCore() {
         var originalwindow_left;
         var screen_status=0; //non-zero for fullscreen
         function UIfullscreen(){
-          //var windows_pre=document.querySelector("SvgjsSvg1001");
           if (screen_status==0){
             originalwindow_width=winds.win.clientWidth;
             originalwindow_height=winds.win.clientHeight;
-            originalwindow_top=winds.win.clientTop;
-            originalwindow_left=winds.win.clentLeft;
-            winds.win.style.width="100%";
+            originalwindow_top=winds.win.offsetTop;
+            originalwindow_left=winds.win.offsetLeft;
+            winds.win.style.width ="100%";
             winds.win.style.height="100%";
             winds.win.style.left=0;
             winds.win.style.top=0;
             screen_status=1;
-          }else{//already fullscreen
-            winds.win.style.width=originalwindow_width +"px";
-            winds.win.style.height=originalwindow_height+"px";
-            winds.win.style.top=originalwindow_top+"px";
-            winds.win.style.left=originalwindow_left+"px";
+          }else if(screen_status==1){//already fullscreen
+            winds.win.style.width = originalwindow_width + "px";
+            winds.win.style.height = originalwindow_height + "px";
+            winds.win.style.top = originalwindow_top + "px";
+            winds.win.style.left = originalwindow_left + "px";
             screen_status=0;
           }
         }
