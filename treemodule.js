@@ -45,6 +45,12 @@ chatTreeCore.registerModule("tree", {
         oldViewBox = svgCanvas.viewbox();
         svgCanvas.viewbox(oldViewBox.x - oldViewBox.width * _del, oldViewBox.y - oldViewBox.height * _del, oldViewBox.width * (1 + _del * 2), oldViewBox.height * (1 + _del * 2));
     });
+
+    this.submitUserDecision=function(tree){
+        for (let i in tree){
+            addMsg(tree[i],true);
+        }
+    }
     this.render = function (abstractedNodes) {
         let _abstractedNodes=JSON.parse(JSON.stringify(abstractedNodes));
         svgCanvas.clear();
@@ -105,7 +111,23 @@ chatTreeCore.registerModule("tree", {
             abstractedNodeArray[refIndexes.indexOf(id)].rect.fill("darkblue");
         }
         function linkElement(id) {
+            //also allow for deselection
+            if (id==hotElement){
+                hotElement=undefined;
+                abstractedNodeArray[refIndexes.indexOf(id)].rect.fill("blue");
+                return;
+            }
+            //recurse up the tree and check that we are not making an infinite loop
+            //if we are making an infinite loop, then say nope.
+            let ce=id;
+            while(_abstractedNodes[ce].parent && _abstractedNodes[ce].parent!=ce){
+                if (ce.toString()==hotElement.toString())return;
+                else ce=_abstractedNodes[ce].parent;
+            }
+            //root case
+            if (ce.toString()==hotElement.toString())return;
             _abstractedNodes[hotElement].parent = id;
+            me.submitUserDecision(_abstractedNodes);
             me.render(_abstractedNodes);
         }
         function renderItem(i) {
@@ -184,12 +206,7 @@ chatTreeCore.registerModule("tree", {
     }
 
     chatTreeCore.on("urlChange", () => {
-        //get the 
         this.render(chattreedata[whoIamTalkingto()].msgs);
-        //this.render(makeTree());
-        /*
-        this.render(retrieveTree(whoIamTalkingto()));
-        */
     })
 
 })

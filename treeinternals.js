@@ -3,7 +3,7 @@ var i = 1;
 var nodes = [];
 var connections = [];
 
-function addMsg(msg) {
+function addMsg(msg,userDecision=false) {
 
     let txt = msg.content;
     let chat = msg.chatId;

@@ -133,7 +133,6 @@ function _chatTreeCore() {
         winds.topbar.appendChild(title);
 
         var i=0;
-        var UIclearsidebutton;
         var ID = function () {return '_' + Math.random().toString(36).substr(2, 9);};
         var uniqueID=ID();
 
