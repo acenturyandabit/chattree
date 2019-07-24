@@ -201,6 +201,6 @@ var preURL="";
 setInterval(()=>{
     if (window.location.href!=preURL){
         preURL=window.location.href;
-        chatTreeCore.fire("urlChange",preURL);        
+        chatTreeCore.fire("urlChange",preURL);
     }
 },300)
