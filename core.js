@@ -193,8 +193,11 @@ function _chatTreeCore() {
         winds.inner.style.overflow = "auto";
         winds.inner.style.width = "100%";
         winds.win.appendChild(winds.inner);
-        this.activeModules.push(new this.availableModules[moduleName].fn(this, winds.inner));
-
+        this.activeModules.push({
+            module:new this.availableModules[moduleName].fn(this, winds.inner),
+            winds:winds
+        });
+        //this.activeModules[0].winds
         winds.close_btn.addEventListener("click",UIshowwindow);
         winds.resize_btn.addEventListener("click",UIfullscreen);
         var chattreewindow=document.getElementById("SvgjsSvg1001");
