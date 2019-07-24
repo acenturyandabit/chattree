@@ -32,7 +32,7 @@ chatTreeCore.registerModule("tree", function (core, div) {
     }
     svgCanvas.on("mouseup", done);
     svgCanvas.on("mouseleave", done);
-    let del = 0.01
+    let del = 0.1;
     svgCanvas.on("wheel", (e) => {
         let _del = del;
         if (e.deltaY < 0) _del = -del;
