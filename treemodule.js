@@ -8,7 +8,9 @@ function makeTree() {
     return linklist;
 }
 
-chatTreeCore.registerModule("tree", function (core, div) {
+chatTreeCore.registerModule("tree",{
+    prettyName:"Chat Tree"
+}, function (core, div) {
     let svgCanvas;
     let svgCanvasDiv = document.createElement("div");
     svgCanvasDiv.style.width = "100%";

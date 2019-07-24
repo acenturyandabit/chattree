@@ -65,7 +65,7 @@ function _chatTreeCore() {
     this.registerModule = function (moduleName, options, fn) {
         if (!fn) {
             fn = options;
-            options = undefined;
+            options = {};
         }
         this.availableModules[moduleName] = {
             fn: fn,
@@ -130,7 +130,7 @@ function _chatTreeCore() {
         //create button
         var i = 0;
         var UIclearsidebutton;
-        var UIsidebutton = htmlwrap('<div id="chat_tree_btn" class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">Chat Tree</div></div>');
+        var UIsidebutton = htmlwrap(`<div id="chat_tree_btn" class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
         UIsidebutton.addEventListener("click", UIshowwindow);
 
         function UIsidebar(pid) {
@@ -159,6 +159,7 @@ function _chatTreeCore() {
         }
         winds.inner = document.createElement("div");
         winds.inner.style.height = "calc(100% - 18px)";//oddly specific i know
+        winds.inner.style.overflow = "auto";
         winds.inner.style.width = "100%";
         winds.win.appendChild(winds.inner);
         this.activeModules.push(new this.availableModules[moduleName].fn(this, winds.inner));
