@@ -200,11 +200,13 @@ function _chatTreeCore() {
         //this.activeModules[0].winds
         winds.close_btn.addEventListener("click",UIshowwindow);
         winds.resize_btn.addEventListener("click",UIfullscreen);
-        var chattreewindow=document.getElementById("SvgjsSvg1001");
         function clickon(){
-          winds.win.style.zIndex =Number(winds.win.style.zIndex)+1;
+          for(var i=0;i<me.activeModules.length;i++){
+            me.activeModules[i].winds.win.style.zIndex=300;
+          }
+          winds.win.style.zIndex =301;
         }
-        //winds.win.addEventListener("click",clickon);
+        winds.win.addEventListener("click",clickon);
     }
 
 }
