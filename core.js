@@ -112,15 +112,16 @@ function _chatTreeCore() {
         winds.topbar.style.width="100%";
         winds.topbar.style.background="blue";
         winds.win.appendChild(winds.topbar);
-        winds.win.addEventListener("mousedown", (e) => { if (e.target == winds.topbar) winds.moving = { dx: winds.win.offsetLeft - e.pageX, dy: winds.win.offsetTop - e.pageY } });
-        document.body.appendChild(winds.win);
-        winds.win.parentElement.addEventListener("mousemove", (e) => {
-            if (winds.moving) {
-                winds.win.style.left = e.pageX + winds.moving.dx + "px";
-                winds.win.style.top = e.pageY + winds.moving.dy + "px";
-            }
-        });
-        winds.win.parentElement.addEventListener("mouseup", (e) => {winds.moving=false;});
+        winds.topbar.addEventListener("mousedown", (e) => { winds.moving = { dx: winds.win.offsetLeft - e.pageX, dy: winds.win.offsetTop - e.pageY } });
+         document.body.appendChild(winds.win);
+         winds.win.parentElement.addEventListener("mousemove", (e) => {
+             if (winds.moving) {
+                 winds.win.style.left = e.pageX + winds.moving.dx + "px";
+                 winds.win.style.top = e.pageY + winds.moving.dy + "px";
+             }
+         });
+         winds.win.parentElement.addEventListener("mouseup", (e) => {winds.moving=false;});
+
 
         var title=htmlwrap(`<div id="chat_tree_header" tabindex="0"><div>${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
         title.style.color="white";
