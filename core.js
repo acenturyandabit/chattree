@@ -51,9 +51,6 @@ function htmlwrap(html, el) {
 }
 
 
-
-
-
 function _chatTreeCore() {
     this.availableModules = {};
     this.activeModules = [];
@@ -94,12 +91,11 @@ function _chatTreeCore() {
         winds.resize_btn.style.background="green";
         winds.resize_btn.style.height = "10px";
         winds.resize_btn.style.width= "10px";
-        winds.resize_btn.style.cssFloat= "right";
+        winds.resize_btn.style.cssFloat= "left";
         winds.close_btn.style.background="red";
-        winds.close_btn.style.cssFloat= "right";
+        winds.close_btn.style.cssFloat= "left";
         winds.topbar.appendChild(winds.close_btn);
         winds.topbar.appendChild(winds.resize_btn);
-
 
         winds.win.style.position = "absolute";
         winds.win.style.background = "pink";
@@ -131,7 +127,6 @@ function _chatTreeCore() {
         UIsidebutton.addEventListener("click",UIshowwindow);
 
         function UIsidebar(pid){
-          console.log(i);
           var lastbutton=document.querySelector("._1li_");
           if(i==0){lastbutton.appendChild(UIsidebutton);}
           if(i>0){console.log("i>0");UIsidebutton.remove(); lastbutton.appendChild(UIsidebutton);}
@@ -140,13 +135,44 @@ function _chatTreeCore() {
 
         //UI side button
         var pid=setInterval(()=>UIsidebar(pid),300);
-
         //window visibility
         var window_status=0;//By default, the window is visible=0
         function UIshowwindow(){
           if(window_status==0){winds.win.style.visibility='hidden';  window_status=1;}
           else{winds.win.style.visibility='visible';window_status=0;}
         }
+        //maximise window
+        var originalwindow_height;
+        var originalwindow_width;
+        var originalwindow_top;
+        var originalwindow_left;
+        var screen_status=0; //non-zero for fullscreen
+        function UIfullscreen(){
+          //var windows_pre=document.querySelector("SvgjsSvg1001");
+          if (screen_status==0){
+            originalwindow_width=winds.win.clientWidth;
+            originalwindow_height=winds.win.clientHeight;
+            originalwindow_top=winds.win.clientTop;
+            originalwindow_left=winds.win.clentLeft;
+            winds.win.style.width="100%";
+            winds.win.style.height="100%";
+            winds.win.style.left=0;
+            winds.win.style.top=0;
+            screen_status=1;
+          }else{//already fullscreen
+            winds.win.style.width=originalwindow_width +"px";
+            winds.win.style.height=originalwindow_height+"px";
+            winds.win.style.top=originalwindow_top+"px";
+            winds.win.style.left=originalwindow_left+"px";
+            screen_status=0;
+          }
+
+
+
+        }
+
+        winds.close_btn.addEventListener("click",UIshowwindow);
+        winds.resize_btn.addEventListener("click",UIfullscreen);
 
         this.activeModules.push(new this.availableModules[moduleName].fn(this, winds.win));
 
