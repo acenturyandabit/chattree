@@ -80,13 +80,25 @@ function _chatTreeCore() {
         let win = document.createElement("div");
         let close_btn = document.createElement("div");
         let resize_btn = document.createElement("div");
+        let corner_btn=document.createElement("div");
         let winds = {
             win: document.createElement("div"),
             topbar:document.createElement("div"),
             close_btn:document.createElement("div"),
             resize_btn: document.createElement("div"),
+            corner_btn: document.createElement("div"),
             moving: false
         }
+        winds.corner_btn.style.color="blue";
+        winds.corner_btn.style.height="15px";
+        winds.corner_btn.style.width="15px";
+        winds.corner_btn.style.background="black";
+        winds.corner_btn.style.right = "0px";
+        winds.corner_btn.style.bottom ="0px";
+        winds.corner_btn.style.position="absolute";
+        winds.win.style.position="relative";
+        winds.win.appendChild(winds.corner_btn);
+
         winds.close_btn.style.height = "15px";
         winds.close_btn.style.width= "15px";
         winds.resize_btn.style.background="green";
@@ -97,7 +109,6 @@ function _chatTreeCore() {
         winds.close_btn.style.cssFloat= "left";
         winds.topbar.appendChild(winds.close_btn);
         winds.topbar.appendChild(winds.resize_btn);
-
         winds.win.style.position = "absolute";
         winds.win.style.background = "white";
         winds.win.style.zIndex = 301;
@@ -129,8 +140,8 @@ function _chatTreeCore() {
         title.style.height="15px";
         title.style.marginTop="0px";
         winds.topbar.appendChild(title);
-        winds.win.style.zIndex="100";
-        //create button
+        winds.win.style.zIndex="10000";
+
         var i=0;
         var UIclearsidebutton;
         var UIsidebutton = htmlwrap(`<div id="chat_tree_btn" class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
