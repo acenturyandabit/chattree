@@ -1,3 +1,4 @@
+
 function addEventAPI(itm) {
     itm.events = {};
     itm.fire = function (e, args) {
@@ -80,24 +81,14 @@ function _chatTreeCore() {
         let win = document.createElement("div");
         let close_btn = document.createElement("div");
         let resize_btn = document.createElement("div");
-        let corner_btn=document.createElement("div");
         let winds = {
             win: document.createElement("div"),
             topbar:document.createElement("div"),
             close_btn:document.createElement("div"),
             resize_btn: document.createElement("div"),
-            corner_btn: document.createElement("div"),
             moving: false
         }
-        winds.corner_btn.style.color="blue";
-        winds.corner_btn.style.height="15px";
-        winds.corner_btn.style.width="15px";
-        winds.corner_btn.style.background="black";
-        winds.corner_btn.style.right = "0px";
-        winds.corner_btn.style.bottom ="0px";
-        winds.corner_btn.style.position="absolute";
-        winds.win.style.position="relative";
-        winds.win.appendChild(winds.corner_btn);
+
 
         winds.close_btn.style.height = "15px";
         winds.close_btn.style.width= "15px";
@@ -111,7 +102,7 @@ function _chatTreeCore() {
         winds.topbar.appendChild(winds.resize_btn);
         winds.win.style.position = "absolute";
         winds.win.style.background = "white";
-        winds.win.style.zIndex = 301;
+        winds.win.style.zIndex = 300;
         winds.win.style.border = "1px solid grey";
         winds.win.style.borderRadius = "3px";
         winds.win.style.width = "200px";
@@ -140,15 +131,18 @@ function _chatTreeCore() {
         title.style.height="15px";
         title.style.marginTop="0px";
         winds.topbar.appendChild(title);
-        winds.win.style.zIndex="10000";
 
         var i=0;
         var UIclearsidebutton;
-        var UIsidebutton = htmlwrap(`<div id="chat_tree_btn" class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
+        var ID = function () {return '_' + Math.random().toString(36).substr(2, 9);};
+        var uniqueID=ID();
+
+        var UIsidebutton = htmlwrap(`<div id="${uniqueID}" class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
         UIsidebutton.addEventListener("click", UIshowwindow);
 
         function UIsidebar(pid) {
             var lastbutton = document.querySelector("._1li_");
+            var btnExist=document.getElementById(uniqueID);
             if (i == 0) {
                 try {
                     lastbutton.appendChild(UIsidebutton);
@@ -158,8 +152,7 @@ function _chatTreeCore() {
                     console.log("The rest of the document is not ready yet :(")
                 }
             }
-            if (i > 0) {UIsidebutton.remove(); lastbutton.appendChild(UIsidebutton); }
-
+            if (i > 0 && btnExist==null) { lastbutton.appendChild(UIsidebutton); }
         }
 
         //UI side button
@@ -204,7 +197,11 @@ function _chatTreeCore() {
 
         winds.close_btn.addEventListener("click",UIshowwindow);
         winds.resize_btn.addEventListener("click",UIfullscreen);
-
+        var chattreewindow=document.getElementById("SvgjsSvg1001");
+        function clickon(){
+          winds.win.style.zIndex =Number(winds.win.style.zIndex)+1;
+        }
+        //winds.win.addEventListener("click",clickon);
     }
 
 }

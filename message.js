@@ -19,9 +19,9 @@ function _message() {
 
 
 /**
- * 
+ *
  * Collects existing messages
- * 
+ *
  */
 function collectMessages() {
     let messageArray=[];
@@ -49,7 +49,7 @@ function collectMessages() {
             for (let m = messages.length - 1; m >= 0; m--) {
                 // TODO: Check that _aok class doesn't change after refresh etc
                 //  Images and Stickers use classes apart from _aok
-                //  aria-label seems to always contain the text of the messages */ 
+                //  aria-label seems to always contain the text of the messages */
 
                 if (messages[m].tagName == "DIV") {     // h4 hold nametag
 
@@ -79,9 +79,9 @@ function collectMessages() {
 }
 
 /**
- * 
+ *
  * Collects new messages
- * 
+ *
  */
 function refreshMessages() {
     let target = document.querySelector("[aria-label='Messages']").querySelector("[id]");
@@ -95,7 +95,7 @@ function refreshMessages() {
 
 /**
  * Section to call the collection function when we switch users; and store messages
- * 
+ *
  */
 var messageCache = {};
 chatTreeCore.on("urlChange", () => {
@@ -115,7 +115,7 @@ chatTreeCore.on("urlChange", () => {
 
 /**
  * TO BE REMOVED
- * This just refreshes the message cache indiscriminantly and inefficiently every so or so seconds. 
+ * This just refreshes the message cache indiscriminantly and inefficiently every so or so seconds.
  */
 
 setInterval(() => {
