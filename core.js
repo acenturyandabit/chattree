@@ -52,6 +52,7 @@ function htmlwrap(html, el) {
 
 
 function _chatTreeCore() {
+    let me=this;
     this.availableModules = {};
     this.activeModules = [];
 
@@ -86,11 +87,11 @@ function _chatTreeCore() {
             resize_btn: document.createElement("div"),
             moving: false
         }
-        winds.close_btn.style.height = "10px";
-        winds.close_btn.style.width= "10px";
+        winds.close_btn.style.height = "15px";
+        winds.close_btn.style.width= "15px";
         winds.resize_btn.style.background="green";
-        winds.resize_btn.style.height = "10px";
-        winds.resize_btn.style.width= "10px";
+        winds.resize_btn.style.height = "15px";
+        winds.resize_btn.style.width= "15px";
         winds.resize_btn.style.cssFloat= "left";
         winds.close_btn.style.background="red";
         winds.close_btn.style.cssFloat= "left";
@@ -98,14 +99,16 @@ function _chatTreeCore() {
         winds.topbar.appendChild(winds.resize_btn);
 
         winds.win.style.position = "absolute";
-        winds.win.style.background = "pink";
+        winds.win.style.background = "white";
+        winds.win.style.border = "1px solid grey";
+        winds.win.style.borderRadius = "3px";
         winds.win.style.width = "200px";
         winds.win.style.height = "200px";
         winds.win.style.top = "50%";
         winds.win.style.left = "50%";
         winds.win.style.resize = "both";
         winds.win.style.overflow = "auto";
-        winds.topbar.style.height="10px";
+        winds.topbar.style.height="15px";
         winds.topbar.style.width="100%";
         winds.topbar.style.background="blue";
         winds.win.appendChild(winds.topbar);
@@ -174,6 +177,7 @@ function _chatTreeCore() {
             winds.win.style.left=originalwindow_left+"px";
             screen_status=0;
           }
+        }
         winds.inner = document.createElement("div");
         winds.inner.style.height = "calc(100% - 18px)";//oddly specific i know
         winds.inner.style.overflow = "auto";
@@ -181,17 +185,21 @@ function _chatTreeCore() {
         winds.win.appendChild(winds.inner);
         this.activeModules.push(new this.availableModules[moduleName].fn(this, winds.inner));
 
-
-
-        }
-
         winds.close_btn.addEventListener("click",UIshowwindow);
         winds.resize_btn.addEventListener("click",UIfullscreen);
-
-        this.activeModules.push(new this.availableModules[moduleName].fn(this, winds.win));
 
     }
 
 }
 
 let chatTreeCore = new _chatTreeCore();
+
+
+//Detect when the window url has changed, and fire an event in the core when this happens
+var preURL="";
+setInterval(()=>{
+    if (window.location.href!=preURL){
+        preURL=window.location.href;
+        chatTreeCore.fire("urlChange",preURL);
+    }
+},300)
