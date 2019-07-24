@@ -24,7 +24,7 @@ function _message() {
  * 
  */
 function collectMessages() {
-
+    let messageArray=[];
     let messagesScrape = document.querySelector("[aria-label='Messages']").querySelector("[id]").children;
     let dateCounter = 0;    // To keep track of dates
     let idCounter = 0;
@@ -68,12 +68,14 @@ function collectMessages() {
 
                     // TODO: Replies, Reactions etc
                     chatTreeCore.fire("message", messageObject);
+                    messageArray.push(messageObject);
                     //addMsg(messageObject);
                     console.log(messageObject.toString());
                 }
             }
         }
     }
+    return messageArray;
 }
 
 /**
@@ -89,8 +91,6 @@ function refreshMessages() {
         console.log(mutationList);
     });
     observeNewMessages.observe(target, { subtree: true, childList: true });
-
-
 }
 
 /**
@@ -104,9 +104,21 @@ chatTreeCore.on("urlChange", () => {
     function f() {
         try {
             messageCache[whoIamTalkingto()] = collectMessages();
+            refreshMessages();
         } catch (e) {
             setTimeout(f, 100);
         }
     }
     setTimeout(f, 100);
 });
+
+
+/**
+ * TO BE REMOVED
+ * This just refreshes the message cache indiscriminantly and inefficiently every so or so seconds. 
+ */
+
+setInterval(() => {
+    chatTreeCore.fire("refreshMessages");
+    messageCache[whoIamTalkingto()] = collectMessages();
+}, 500);

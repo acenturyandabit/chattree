@@ -4,7 +4,7 @@ chatTreeCore.registerModule("list",{
     core.on("message",(msg)=>{
         div.appendChild(htmlwrap(`<p>${msg.toString()}</p>`));
     })
-    chatTreeCore.on("urlChange", () => {
+    chatTreeCore.on("refreshMessages,urlChange", () => {
         while (div.children.length){
             div.children[0].remove();
         }
