@@ -121,4 +121,5 @@ chatTreeCore.on("urlChange", () => {
 setInterval(() => {
     chatTreeCore.fire("refreshMessages");
     messageCache[whoIamTalkingto()] = collectMessages();
+    chatTreeCore.fire("afterRefreshMessages");
 }, 500);
