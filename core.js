@@ -206,7 +206,7 @@ function _chatTreeCore() {
           }
           winds.win.style.zIndex =301;
         }
-        winds.win.addEventListener("click",clickon);
+        winds.win.addEventListener("mousedown",clickon);
     }
 
 }
