@@ -2,18 +2,19 @@
 function makeTree() {
     let nodes = {};
     for (let i = 0; i < 26; i++) {
-        let nd=String.fromCharCode(97 + i);
-        nodes[nd]={};
+        let nd = String.fromCharCode(97 + i);
+        nodes[nd] = {};
         let prnt = Math.floor(Math.random() * i);
-        nodes[nd].content=String.fromCharCode(97 + i);
-        nodes[nd].parent=String.fromCharCode(97 + prnt);
+        nodes[nd].content = String.fromCharCode(97 + i);
+        nodes[nd].parent = String.fromCharCode(97 + prnt);
     }
     return nodes;
 }
 
-chatTreeCore.registerModule("tree",{
-    prettyName:"Chat Tree"
+chatTreeCore.registerModule("tree", {
+    prettyName: "Chat Tree"
 }, function (core, div) {
+    let me = this;
     let svgCanvas;
     let svgCanvasDiv = document.createElement("div");
     svgCanvasDiv.style.width = "100%";
@@ -45,15 +46,16 @@ chatTreeCore.registerModule("tree",{
         svgCanvas.viewbox(oldViewBox.x - oldViewBox.width * _del, oldViewBox.y - oldViewBox.height * _del, oldViewBox.width * (1 + _del * 2), oldViewBox.height * (1 + _del * 2));
     });
     this.render = function (abstractedNodes) {
+        let _abstractedNodes=JSON.parse(JSON.stringify(abstractedNodes));
         svgCanvas.clear();
         //determine which layers each element is on
         for (let i in abstractedNodes) {
-            if (!abstractedNodes[i].parent)abstractedNodes[i].parent=i;
-            abstractedNodes[i].children=[];
+            if (!abstractedNodes[i].parent) abstractedNodes[i].parent = i;
+            abstractedNodes[i].children = [];
         }
         //process 'links'
         for (let i in abstractedNodes) {
-            if (abstractedNodes[i].parent!=i)abstractedNodes[abstractedNodes[i].parent].children.push(i);
+            if (abstractedNodes[i].parent != i) abstractedNodes[abstractedNodes[i].parent].children.push(i);
         }
         let maxDepth = 0;
         let roots = {};
@@ -97,6 +99,15 @@ chatTreeCore.registerModule("tree",{
         let height = 30;
         let vspacing = 60;
         let hspacing = 10;
+        let hotElement;
+        function setHotElement(id) {
+            hotElement = id;
+            abstractedNodeArray[refIndexes.indexOf(id)].rect.fill("darkblue");
+        }
+        function linkElement(id) {
+            _abstractedNodes[hotElement].parent = id;
+            me.render(_abstractedNodes);
+        }
         function renderItem(i) {
             let currentElement = abstractedNodeArray[i];
             currentElement.groupElement = svgCanvas.group().x(100).y(100);
@@ -105,8 +116,9 @@ chatTreeCore.registerModule("tree",{
                 return abstractedNodeArray[refIndexes.indexOf(i)];
             });
             let placeX = 0;
-            let text=currentElement.groupElement.text((abstractedNodes[currentElement.key].content || currentElement.key).toString()).cy(0).stroke("white").size(10);
-            currentElement.estimatedWidth = text.bbox().w+10;
+            //Create some text in the box
+            let text = currentElement.groupElement.text((abstractedNodes[currentElement.key].content || currentElement.key).toString()).cy(0).stroke("white").size(10);
+            currentElement.estimatedWidth = text.bbox().w + 10;
             if (children.length) {
                 //add the elements to a group
                 currentElement.estimatedWidth = 0;
@@ -125,15 +137,33 @@ chatTreeCore.registerModule("tree",{
                 placeX = currentElement.estimatedWidth / 2;
                 //add some lines
                 children.forEach((v, i) => {
-                    currentElement.groupElement.line(v.tmpcwx, vspacing-height/2, placeX, 0).back().stroke({ color: "black", width: 2 });
+                    currentElement.groupElement.line(v.tmpcwx, vspacing - height / 2, placeX, 0).back().stroke({ color: "black", width: 2 });
                 })
             }
             //create the text and calculate the width of it.
             placeX = currentElement.estimatedWidth / 2;
+            let reMoveBox = false;
+            if (currentElement.estimatedWidth < text.bbox().w + 10) {
+                oew = placeX;
+                currentElement.estimatedWidth = text.bbox().w + 10;
+                reMoveBox = true;
+            }
             //create a box for it
-            currentElement.groupElement.rect(text.bbox().w+10, height).cx(placeX).cy(0).fill("blue");
+            currentElement.rect = currentElement.groupElement.rect(text.bbox().w + 10, height).cx(placeX).cy(0).fill("blue").click(() => {
+                if (hotElement){
+                    linkElement(currentElement.key);
+                }else{
+                    setHotElement(currentElement.key);
+                }
+            });
             text.cx(placeX).front();
-            //Create some text in the box
+            //if we need to re-move the box, do so now
+            if (reMoveBox) {
+                let oldGroupElement = currentElement.groupElement;
+                currentElement.groupElement = svgCanvas.group().cx(0).cy(0);
+                currentElement.groupElement.add(oldGroupElement);
+                oldGroupElement.x(currentElement.estimatedWidth / 2 - placeX).y(0);
+            }
         }
         abstractedNodeArray.forEach((v, i) => { renderItem(i) });
         //finally add each group to a big tree to lay out all root nodes
@@ -147,21 +177,16 @@ chatTreeCore.registerModule("tree",{
                     //spacing between elements    
                 }
                 //arrange the elements within the group
-                v.groupElement.x(cew).cy(0);
+                v.groupElement.x(cew).y(0);
                 cew += v.estimatedWidth;
             }
         });
     }
 
-    this.update=function(msg){
-        //update an existing message
-
-        //attach it to its parent
-    }
-    chatTreeCore.on("afterRefreshMessages", () => {
+    chatTreeCore.on("urlChange", () => {
         //get the 
-        //this.render(createLinearTree(whoIamTalkingto()));
-        this.render(makeTree());
+        this.render(chattreedata[whoIamTalkingto()].msgs);
+        //this.render(makeTree());
         /*
         this.render(retrieveTree(whoIamTalkingto()));
         */

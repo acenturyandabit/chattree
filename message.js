@@ -25,6 +25,7 @@ function _message() {
  */
 function collectMessages() {
     let messageArray=[];
+    if (!document.querySelector("[aria-label='Messages']"))return;//dont do anything if there is no element to consider
     let messagesScrape = document.querySelector("[aria-label='Messages']").querySelector("[id]").children;
     let dateCounter = 0;    // To keep track of dates
     let idCounter = 0;
@@ -70,7 +71,7 @@ function collectMessages() {
                     chatTreeCore.fire("message", messageObject);
                     messageArray.push(messageObject);
                     //addMsg(messageObject);
-                    console.log(messageObject.toString());
+                    //console.log(messageObject.toString());
                 }
             }
         }
@@ -104,7 +105,7 @@ chatTreeCore.on("urlChange", () => {
     function f() {
         try {
             messageCache[whoIamTalkingto()] = collectMessages();
-            refreshMessages();
+            //refreshMessages();
         } catch (e) {
             setTimeout(f, 100);
         }
