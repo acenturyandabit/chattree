@@ -100,6 +100,7 @@ function _chatTreeCore() {
 
         winds.win.style.position = "absolute";
         winds.win.style.background = "white";
+        winds.win.style.zIndex = 301;
         winds.win.style.border = "1px solid grey";
         winds.win.style.borderRadius = "3px";
         winds.win.style.width = "200px";
