@@ -3,18 +3,28 @@ var i = 1;
 var nodes = [];
 var connections = [];
 
+
+chatTreeCore.on("message", (msg) => {
+    //check for uniquenesss
+    if (chattreedata[chat] == undefined) {
+        chattreedata[chat] = {
+            msgs:{}
+        };
+    }
+})
+
+
+
+
+
+
 function addMsg(msg,userDecision=false) {
 
     let txt = msg.content;
     let chat = msg.chatId;
     let from = msg.sender;
 
-    if (chattreedata[chat] == undefined) {
-        chattreedata[chat] = {
-            msgs:{},
-            prev:undefined
-        };
-    }
+    
     chattreedata[chat].msgs[msg.id]=msg;
     //determine the parent
     function isParent(messageA, messageB){
@@ -39,9 +49,7 @@ function retrieveTree(id) {
     return chattreedata[id];
 }
 
-chatTreeCore.on("message", (msg) => {
-    addMsg(msg);
-})
+
 
 
 /**
