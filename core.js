@@ -62,7 +62,7 @@ function _chatTreeCore() {
     this.registerModule = function (moduleName, options, fn) {
         if (!fn) {
             fn = options;
-            options = undefined;
+            options = {};
         }
         this.availableModules[moduleName] = {
             fn: fn,
@@ -123,6 +123,7 @@ function _chatTreeCore() {
         //create button
         var i=0;
         var UIclearsidebutton;
+<<<<<<< HEAD
         var UIsidebutton=htmlwrap('<div id="chat_tree_btn" class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">Chat Tree</div></div>');
         UIsidebutton.addEventListener("click",UIshowwindow);
 
@@ -131,6 +132,24 @@ function _chatTreeCore() {
           if(i==0){lastbutton.appendChild(UIsidebutton);}
           if(i>0){console.log("i>0");UIsidebutton.remove(); lastbutton.appendChild(UIsidebutton);}
           i++;
+=======
+        var UIsidebutton = htmlwrap(`<div id="chat_tree_btn" class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
+        UIsidebutton.addEventListener("click", UIshowwindow);
+
+        function UIsidebar(pid) {
+            var lastbutton = document.querySelector("._1li_");
+            if (i == 0) {
+                try {
+                    lastbutton.appendChild(UIsidebutton);
+                    i++;
+                }
+                catch (e) {
+                    console.log("The rest of the document is not ready yet :(")
+                }
+            }
+            if (i > 0) {UIsidebutton.remove(); lastbutton.appendChild(UIsidebutton); }
+
+>>>>>>> 44b8d8fa7f0dcbf2691832e70052e2144aa22243
         }
 
         //UI side button
@@ -141,6 +160,7 @@ function _chatTreeCore() {
           if(window_status==0){winds.win.style.visibility='hidden';  window_status=1;}
           else{winds.win.style.visibility='visible';window_status=0;}
         }
+<<<<<<< HEAD
         //maximise window
         var originalwindow_height;
         var originalwindow_width;
@@ -166,6 +186,14 @@ function _chatTreeCore() {
             winds.win.style.left=originalwindow_left+"px";
             screen_status=0;
           }
+=======
+        winds.inner = document.createElement("div");
+        winds.inner.style.height = "calc(100% - 18px)";//oddly specific i know
+        winds.inner.style.overflow = "auto";
+        winds.inner.style.width = "100%";
+        winds.win.appendChild(winds.inner);
+        this.activeModules.push(new this.availableModules[moduleName].fn(this, winds.inner));
+>>>>>>> 44b8d8fa7f0dcbf2691832e70052e2144aa22243
 
 
 

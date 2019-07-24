@@ -37,3 +37,7 @@ function addMsg(msg) {
 function retrieveTree(id){
     return chattreedata[id];
 }
+
+chatTreeCore.on("message",(msg)=>{
+    addMsg(msg);
+})
