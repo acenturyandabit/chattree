@@ -10,26 +10,27 @@ function addMsg(msg) {
     let from = msg.sender;
 
     if (chattreedata[chat] == undefined) {
-        chattreedata[chat] = {};
+        chattreedata[chat] = {
+            msgs:{},
+            prev:undefined
+        };
     }
-    if (chattreedata[chat][from] == undefined) {
-        chattreedata[chat][from] = {};
+    chattreedata[chat].msgs[msg.id]=msg;
+    //determine the parent
+    function isParent(messageA, messageB){
+        //split it into words
+        let wordsInMessageA=messageA.content.toString().split(" ");
+        let wordsInMessageB=messageB.content.toString().split(" ");
+        //if it contains the same word, then mark it as a parent.
+        for (let i=0;i<wordsInMessageB.length;i++){
+            if (wordsInMessageA.includes(wordsInMessageB[i]))return true;
+        }
+        return false;
     }
-    //for (var i = 1; i<100; i+=1){
-    if (chattreedata[chat]["message" + i] == undefined) {
-        chattreedata[chat][from]["message" + i] = "";
-        chattreedata[chat][from]["message" + i] += txt;
-
+    if (chattreedata[chat].prev && isParent(chattreedata[chat].msgs[chattreedata[chat].prev],chattreedata[chat].msgs[msg.id])){
+        chattreedata[chat].msgs[msg.id].parent=chattreedata[chat].prev;
     }
-    if (i == 1) {
-        var root = chattreedata[chat][from]["message" + i];
-        nodes.push(root);
-    }
-    i += 1;
-    if (txt != undefined && txt.indexOf("?") != -1) { // msg is a question
-
-    }
-
+    chattreedata[chat].prev=msg.id;
 
 }
 
@@ -48,23 +49,23 @@ chatTreeCore.on("message", (msg) => {
  */
 
 function createLinearTree(thread) {
-    let messages = messageCache[thread];
+    let messages = Object.assign({},chattreedata[thread].msgs);
     let preID;
     for (let i in messages) {
         //add it as a node
-        if (preID)messages[i].parent=preID;
-        preID=messages[i].id;
+        if (preID)messages[i].parent=preIDs[Math.floor(Math.random()*preIDs.length)];
+        preID =i;
     }
     return messages;
 }
 
 function createRandomTree(thread) {
-    let messages = messageCache[thread];
+    let messages = Object.assign({},chattreedata[thread].msgs);
     let preIDs=[];
     for (let i in messages) {
         //add it as a node
-        messages[i].parent=preIDs[Math.floor(Math.random()*preIDs.length)];
-        preIDs.push(messages[i].id);
+        if (preIDs.length)messages[i].parent=preIDs[Math.floor(Math.random()*preIDs.length)];
+        preIDs.push(i);
     }
-    return tree;
+    return messages;
 }
