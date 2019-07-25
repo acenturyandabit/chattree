@@ -33,6 +33,12 @@ var intercept = function() {
                 focusChat.id = chatId;
                 focusChat.name = jsonResponse.o0.data.message_thread.name;
                 focusChat.group = jsonResponse.o0.data.message_thread.thread_type==="GROUP";
+                focusChat.actors = {};
+                jsonResponse.o0.data.message_thread.all_participants.edges.forEach((actor)=>{
+                    focusChat.actors[actor.node.messaging_actor.id] = {name : "NO_NAME"};
+                    
+                });
+                // SIMPLIFY
                 focusChat.msgCount = jsonResponse.o0.data.message_thread.messages_count;
                 if(jsonResponse.o0.data.message_thread.image)
                     focusChat.image = jsonResponse.o0.data.message_thread.image.uri; // CAN be null

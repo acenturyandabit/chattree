@@ -22,6 +22,7 @@ function _chat() {
     this.id = undefined;
     this.isGroup = false;
     this.lastUpdated = undefined;
+    this.actors = [];
     this.name = undefined;
     this.msgCount = undefined;
     // Add more attributes
@@ -138,6 +139,7 @@ function refreshMessages() {
 
         chatObject.id = newData.focusChat.id;
         chatObject.isGroup = newData.focusChat.group;
+        chatObject.actors = newData.focusChat.actors;
         chatObject.lastUpdated = newData.focusChat.lastUpdated;
         chatObject.name = newData.focusChat.name;
         chatObject.msgCount = newData.focusChat.msgCount;
