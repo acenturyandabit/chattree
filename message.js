@@ -2,17 +2,17 @@
 function _message() {
     this.id = undefined;
     this.chatId = undefined;
-    this.senderId = undefined; 
-    this.sender = undefined; //TODO how to get names
+    this.senderId = undefined; //TODO figure out how identically named users are handled.
+    this.sender = undefined;
     this.date = undefined;
     this.content = undefined;
-    this.reactions = undefined;
-    this.repliedTo = undefined;
+    this.reactions = { 'love': 0, 'laugh': 0, 'wow': 0, 'angry': 0, 'sad': 0, 'like': 0, 'dislike': 0 };
+    this.reply = undefined;
     // Add more attributes
 
     this.toString = function () {
         return "Message " + this.id + " from chat " + this.chatId
-            + "\nSender: " + this.senderId + "  Date: " + this.date
+            + "\nSender: " + this.sender + "  Date: " + this.date
             + "\nContents:\n" + this.content;
     }
 }
@@ -24,23 +24,15 @@ function _message() {
  *
  */
 function collectMessages() {
-
-    let chatId = whoIamTalkingto();
-
     let messageArray=[];
     if (!document.querySelector("[aria-label='Messages']"))return;//dont do anything if there is no element to consider
     let messagesScrape = document.querySelector("[aria-label='Messages']").querySelector("[id]").children;
     let dateCounter = 0;    // To keep track of dates
     let idCounter = 0;
 
-    // First decide whether first scrape or not
-    //if (getLatestMessageId() !== undefined) {
-    //    idCounter = getLatestMessageId();
-    //}
-
     // Loop through message groups. Note that Messenger orders starting index as top, oldest message loaded.
     // Message groups are 'blobs' of messages sent by the same person in a small timeframe
-    for (let i = 0; i < messagesScrape.length; i++) {
+    for (let i = messagesScrape.length - 1; i >= 0; i--) {
 
         let messageGroup = messagesScrape[i];
         // TODO handle H4 elements to find date and time.
@@ -55,10 +47,7 @@ function collectMessages() {
             // Loop through each message of a message group
             let messages = messageGroup.getElementsByClassName("_41ud")[0].children;
 
-            for (let m = 0; m < messages.length; m++) {
-
-                if (whoIamTalkingto() !== chatId) return;   // Make sure chat still current
-
+            for (let m = messages.length - 1; m >= 0; m--) {
                 // TODO: Check that _aok class doesn't change after refresh etc
                 //  Images and Stickers use classes apart from _aok
                 //  aria-label seems to always contain the text of the messages */
@@ -68,7 +57,7 @@ function collectMessages() {
                     let messageObject = new _message();
 
                     messageObject.id = idCounter++;
-                    messageObject.chatId = chatId;
+                    messageObject.chatId = whoIamTalkingto();
                     messageObject.sender = messageSender;
 
                     if (messages[m].getElementsByClassName("_aok").length > 0)
@@ -90,63 +79,20 @@ function collectMessages() {
     return messageArray;
 }
 
-
-
-
-
-
 /**
  *
  * Collects new messages
  *
  */
 function refreshMessages() {
-
-    if (!document.getElementById("__collectedData")){
-
-        collectedDOMData = document.createElement('p');
-        collectedDOMData.id = '__collectedData';
-        collectedDOMData.style.height = 0;
-        collectedDOMData.style.overflow = 'hidden';
-        collectedDOMData.innerHTML = "";            // NO data yet
-        document.body.appendChild(collectedDOMData);
-
-    } else collectedDOMData = document.getElementById("__collectedData");
+    let target = document.querySelector("[aria-label='Messages']").querySelector("[id]");
 
     let observeNewMessages = new MutationObserver(function (mutationList, observer) {
-        // Load new messages
-        let newData = JSON.parse(mutationList[0].target.innerHTML);
-        console.log(newData);
-
-        let messageArray=[];
-        
-        newData.focusMessages.forEach( (msg)=> {
-            //  Make a new Messasge Object and assign it to the recieved JSON values
-            let messageObject = new _message();
-
-            messageObject.id = msg.id;
-            messageObject.chatId = msg.chatId;
-            messageObject.senderId = msg.senderId;
-            messageObject.sender = undefined;
-            messageObject.date = msg.date;
-            messageObject.content = msg.content;
-            messageObject.reactions = msg.reactions;
-            messageObject.repliedTo = msg.repliedTo;
-                    
-            chatTreeCore.fire("message", messageObject);
-            messageArray.push(messageObject);
-        });
-
-        console.log(messageArray);
-
-        // TODO CODE HERE
-        
+        // Do stuff - load new messages
+        console.log(mutationList);
     });
-    observeNewMessages.observe(collectedDOMData, { subtree: true, childList: true });
+    observeNewMessages.observe(target, { subtree: true, childList: true });
 }
-refreshMessages();
-
-
 
 /**
  * Section to call the collection function when we switch users; and store messages
