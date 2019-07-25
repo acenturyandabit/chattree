@@ -6,7 +6,7 @@ It also happens to contain a powerful set of functions to access and listen to m
 ## How can I download it?
 For Chrome, simply head [here, to download it from the Chrome Web Store.](https://chrome.google.com/webstore/detail/chat-tree/fjejdehlndcmcciepbpielnigfnaefpc) 
 
-![A screenshot of the product.](screenshot.jpg "This opens little windows on your chat screen.")
+![A screenshot of the product.](screenshot.png "This opens little windows on your chat screen.")
 
 ## I want to contribute!
 
