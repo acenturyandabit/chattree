@@ -207,6 +207,6 @@ chatTreeCore.registerModule("tree", {
 
     chatTreeCore.on("urlChange", () => {
         this.render(chattreedata[whoIamTalkingto()].msgs);
-    })
+    });
 
 })

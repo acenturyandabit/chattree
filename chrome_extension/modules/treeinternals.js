@@ -3,20 +3,23 @@ var i = 1;
 var nodes = [];
 var connections = [];
 
+chatTreeCore.on("chat", (chat) => {
+    //check for uniquenesss
+
+
+    //TODO
+});
+
 
 chatTreeCore.on("message", (msg) => {
     let chat = msg.chatId;
     //check for uniquenesss
-    if (chattreedata[chat] == undefined) {
-        chattreedata[chat] = {
+    if (chattreedata[msg.chatId] == undefined) {
+        chattreedata[msg.chatId] = {
             msgs:{}
         };
     }
-})
-
-
-
-
+});
 
 
 function addMsg(msg,userDecision=false) {
