@@ -61,14 +61,16 @@ var intercept = function() {
                 data.focusChat = focusChat;
                 
                 // Create DOM element to 'bridge' data to our extension code
-                if (document.getElementById("__collectedData"))
-                    document.getElementById("__collectedData").remove();
-                let collectedDOMData = document.createElement('p');
-                collectedDOMData.id = '__collectedData';
+                let collectedDOMData = undefined;
+                if (!document.getElementById("__collectedData")){
+                    collectedDOMData = document.createElement('p');
+                    collectedDOMData.id = '__collectedData';
+                    collectedDOMData.style.height = 0;
+                    collectedDOMData.style.overflow = 'hidden';
+                    document.body.appendChild(collectedDOMData);
+                } else collectedDOMData = document.getElementById("__collectedData");
+                
                 collectedDOMData.innerText = JSON.stringify(data);
-                collectedDOMData.style.height = 0;
-                collectedDOMData.style.overflow = 'hidden';
-                document.body.appendChild(collectedDOMData);
             }               
         });
 
