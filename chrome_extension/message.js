@@ -36,83 +36,6 @@ function _chat() {
 
 /**
  *
- * Collects existing messages
- *
- */
-function collectMessages() {
-
-    let chatId = whoIamTalkingto();
-
-    let messageArray=[];
-    if (!document.querySelector("[aria-label='Messages']"))return;//dont do anything if there is no element to consider
-    let messagesScrape = document.querySelector("[aria-label='Messages']").querySelector("[id]").children;
-    let dateCounter = 0;    // To keep track of dates
-    let idCounter = 0;
-
-    // First decide whether first scrape or not
-    //if (getLatestMessageId() !== undefined) {
-    //    idCounter = getLatestMessageId();
-    //}
-
-    // Loop through message groups. Note that Messenger orders starting index as top, oldest message loaded.
-    // Message groups are 'blobs' of messages sent by the same person in a small timeframe
-    for (let i = 0; i < messagesScrape.length; i++) {
-
-        let messageGroup = messagesScrape[i];
-        // TODO handle H4 elements to find date and time.
-        if (messageGroup.tagName === "DIV") {
-
-            // Message Sender is under '_-ne' class
-            let messageSender = "";
-            if (messageGroup.getElementsByClassName("_-ne").length > 0)
-                messageSender = messageGroup.getElementsByClassName("_-ne")[0].getAttribute("aria-label");
-            // Possibility : class '_nd_' seems to indicate the user's own messages
-
-            // Loop through each message of a message group
-            let messages = messageGroup.getElementsByClassName("_41ud")[0].children;
-
-            for (let m = 0; m < messages.length; m++) {
-
-                if (whoIamTalkingto() !== chatId) return;   // Make sure chat still current
-
-                // TODO: Check that _aok class doesn't change after refresh etc
-                //  Images and Stickers use classes apart from _aok
-                //  aria-label seems to always contain the text of the messages */
-
-                if (messages[m].tagName == "DIV") {     // h4 hold nametag
-
-                    let messageObject = new _message();
-
-                    messageObject.id = idCounter++;
-                    messageObject.chatId = chatId;
-                    messageObject.sender = messageSender;
-
-                    if (messages[m].getElementsByClassName("_aok").length > 0)
-                        messageObject.content = messages[m].getElementsByClassName("_aok")[0].getAttribute("aria-label");
-
-                    if (messages[m].getElementsByClassName("_hh7").length > 0)
-                        messageObject.date = messages[m].getElementsByClassName("_hh7")[0].getAttribute("data-tooltip-content");
-                    // Videos do not have dates?
-
-                    // TODO: Replies, Reactions etc
-                    chatTreeCore.fire("message", messageObject);
-                    messageArray.push(messageObject);
-                    //addMsg(messageObject);
-                    //console.log(messageObject.toString());
-                }
-            }
-        }
-    }
-    return messageArray;
-}
-
-
-
-
-
-
-/**
- *
  * Collects new messages
  *
  */
@@ -167,9 +90,8 @@ function refreshMessages() {
         });
 
         console.log(messageArray);
-
         // TODO CODE HERE
-        
+        chatTreeCore.fire("postMessageLoad",messageArray);
     });
     observeNewMessages.observe(collectedDOMData, { subtree: true, childList: true });
 }
