@@ -6,14 +6,15 @@ var connections = [];
 
 chatTreeCore.on("chat", (chat) => {
     //check for uniquenesss
-    if(chattreedata[chat.id]== undefined){
-        chattreedata[chat.id] = chat;
+    //replace with 'whoamitalkingto' because browser doesnt know.
+    if(chattreedata[whoIamTalkingto()]== undefined){
+        chattreedata[whoIamTalkingto()] = chat;
     }
     //create if doesnt exist.
 });
 
 chatTreeCore.on("message", (msg) => {
-    let chat = msg.chatId;
+    let chat = whoIamTalkingto();
     //check for uniquenesss
     //only add new if adding new
     if (!chattreedata[chat].msgs[msg.id]){
@@ -25,36 +26,14 @@ chatTreeCore.on("message", (msg) => {
 
 
 function decideTree(tree,newMsg){
+    if (tree.prevMsg)newMsg.parent=tree.prevMsg;
+    //if you replied to a message, then mark it as a parent
+    if (newMsg.repliedTo && tree.msgs[newMsg.repliedTo])newMsg.parent=newMsg.repliedTo;
+    tree.prevMsg=newMsg.id;
     //currently linear
 }
 
 
-function userCommit(msg,data){//writing user changes.
-    chattreedata[chat].msgs[msg]=data;
-}
-
-/**
- * Create a tree from an existing message cache
- */
-
-function createLinearTree(thread) {
-    let messages = Object.assign({},chattreedata[thread].msgs);
-    let preID;
-    for (let i in messages) {
-        //add it as a node
-        if (preID)messages[i].parent=preID;
-        preID =i;
-    }
-    return messages;
-}
-
-function createRandomTree(thread) {
-    let messages = Object.assign({},chattreedata[thread].msgs);
-    let preIDs=[];
-    for (let i in messages) {
-        //add it as a node
-        if (preIDs.length)messages[i].parent=preIDs[Math.floor(Math.random()*preIDs.length)];
-        preIDs.push(i);
-    }
-    return messages;
+function userCommit(key,data){//writing user changes.
+    chattreedata[whoIamTalkingto()].msgs[key]=data;
 }

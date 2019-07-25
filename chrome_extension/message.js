@@ -88,9 +88,8 @@ function refreshMessages() {
         });
 
         console.log(messageArray);
-
         // TODO CODE HERE
-        
+        chatTreeCore.fire("postMessageLoad",messageArray);
     });
     observeNewMessages.observe(collectedDOMData, { subtree: true, childList: true });
 }

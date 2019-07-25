@@ -46,11 +46,6 @@ chatTreeCore.registerModule("tree", {
         svgCanvas.viewbox(oldViewBox.x - oldViewBox.width * _del, oldViewBox.y - oldViewBox.height * _del, oldViewBox.width * (1 + _del * 2), oldViewBox.height * (1 + _del * 2));
     });
 
-    this.submitUserDecision = function (tree) {
-        for (let i in tree) {
-            addMsg(tree[i], true);
-        }
-    }
     this.render = function (abstractedNodes) {
         let _abstractedNodes = JSON.parse(JSON.stringify(abstractedNodes));
         svgCanvas.clear();
@@ -127,7 +122,7 @@ chatTreeCore.registerModule("tree", {
             //root case
             if (ce.toString() == hotElement.toString()) return;
             _abstractedNodes[hotElement].parent = id;
-            me.submitUserDecision(_abstractedNodes);
+            userCommit(hotElement,_abstractedNodes);
             me.render(_abstractedNodes);
         }
         function renderItem(i) {
@@ -205,8 +200,9 @@ chatTreeCore.registerModule("tree", {
         });
     }
 
-    chatTreeCore.on("urlChange", () => {
-        this.render(createLinearTree(whoIamTalkingto()));
+    chatTreeCore.on("urlChange,postMessageLoad", () => {
+        this.render(chattreedata[whoIamTalkingto()].msgs);
     });
+    this.render(chattreedata[whoIamTalkingto()].msgs);
 
 })
