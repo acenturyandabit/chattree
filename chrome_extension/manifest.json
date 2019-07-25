@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Chat tree",
-    "version": "0.2",
+    "version": "0.3",
     "description": "Visualise your chat as a tree in messenger.",
     "content_scripts": [
         {
