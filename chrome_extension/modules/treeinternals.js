@@ -9,49 +9,29 @@ chatTreeCore.on("chat", (chat) => {
     if(chattreedata[chat.id]== undefined){
         chattreedata[chat.id] = chat;
     }
+    //create if doesnt exist.
 });
 
 chatTreeCore.on("message", (msg) => {
     let chat = msg.chatId;
     //check for uniquenesss
-    chattreedata[chat].msgs[msg.id]=msg;
+    //only add new if adding new
+    if (!chattreedata[chat].msgs[msg.id]){
+        decideTree(chattreedata[chat],msg);
+        chattreedata[chat].msgs[msg.id]=msg;
+    }
     console.log("--------------");
 });
 
 
-function addMsg(msg,userDecision=false) {
-
-    let txt = msg.content;
-    
-    let from = msg.sender;
-
-    
-    chattreedata[chat].msgs[msg.id]=msg;
-    //determine the parent
-    function isParent(messageA, messageB){
-        //split it into words
-        let wordsInMessageA=messageA.content.toString().split(" ");
-        let wordsInMessageB=messageB.content.toString().split(" ");
-        //if it contains the same word, then mark it as a parent.
-        for (let i=0;i<wordsInMessageB.length;i++){
-            if (wordsInMessageA.includes(wordsInMessageB[i]))return true;
-        }
-        return false;
-    }
-    if (chattreedata[chat].prev && isParent(chattreedata[chat].msgs[chattreedata[chat].prev],chattreedata[chat].msgs[msg.id])){
-        chattreedata[chat].msgs[msg.id].parent=chattreedata[chat].prev;
-    }
-    chattreedata[chat].prev=msg.id;
-
+function decideTree(tree,newMsg){
+    //currently linear
 }
 
 
-function retrieveTree(id) {
-    return chattreedata[id];
+function userCommit(msg,data){//writing user changes.
+    chattreedata[chat].msgs[msg]=data;
 }
-
-
-
 
 /**
  * Create a tree from an existing message cache
@@ -62,7 +42,7 @@ function createLinearTree(thread) {
     let preID;
     for (let i in messages) {
         //add it as a node
-        if (preID)messages[i].parent=preIDs[Math.floor(Math.random()*preIDs.length)];
+        if (preID)messages[i].parent=preID;
         preID =i;
     }
     return messages;

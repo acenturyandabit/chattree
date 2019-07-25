@@ -109,10 +109,12 @@ function _chatTreeCore() {
         creationBars.appendChild(mkbtn);
         mkbtn.addEventListener("click",()=>{
             me.loadModule(moduleName);
+            creationBars.style.display="none";
         })
 
         //for now, immediately load the module
     }
+    
     this.loadModule = function (moduleName) {
         if (!this.availableModules[moduleName]) throw ("Module does not exist!");
 
