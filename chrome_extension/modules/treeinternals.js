@@ -15,7 +15,6 @@ chatTreeCore.on("message", (msg) => {
     let chat = msg.chatId;
     //check for uniquenesss
     chattreedata[chat].msgs[msg.id]=msg;
-    console.log("--------------");
 });
 
 
@@ -62,7 +61,7 @@ function createLinearTree(thread) {
     let preID;
     for (let i in messages) {
         //add it as a node
-        if (preID)messages[i].parent=preIDs[Math.floor(Math.random()*preIDs.length)];
+        if (preID)messages[i].parent=preID;
         preID =i;
     }
     return messages;

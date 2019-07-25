@@ -138,7 +138,7 @@ function _chatTreeCore() {
 
         var UIsidebutton = htmlwrap(`<div id="${uniqueID}" class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
         UIsidebutton.addEventListener("click", UIshowwindow);
-
+        
         function UIsidebar(pid) {
             var lastbutton = document.querySelector("._1li_");
             var btnExist=document.getElementById(uniqueID);
