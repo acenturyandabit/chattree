@@ -25,7 +25,7 @@ function _chat() {
     this.name = undefined;
     this.msgCount = undefined;
     // Add more attributes
-    this.messages = {};
+    this.msgs = {};
 
     this.toString = function () {
         return "Chat " + this.id
