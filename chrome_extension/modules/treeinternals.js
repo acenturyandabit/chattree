@@ -1,4 +1,4 @@
-var chattreedata = {};
+var chattreedata=JSON.parse(localStorage.getItem("chattreedata") || "{}");
 var i = 1;
 var nodes = [];
 var connections = [];
@@ -37,3 +37,7 @@ function decideTree(tree, newMsg) {
 function userCommit(key, data) {//writing user changes.
     chattreedata[whoIamTalkingto()].msgs[key] = data;
 }
+
+window.addEventListener("beforeunload",()=>{
+    localStorage.setItem("chattreedata",JSON.stringify(chattreedata));
+})

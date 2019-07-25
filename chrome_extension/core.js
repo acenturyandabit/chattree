@@ -1,3 +1,10 @@
+/**
+ * Events that are fired:
+ * core.on("message",(data)=>{}): fired when a new message is added. Data is a message object (See message.js).
+ * core.on("postMessageLoad",(data)=>{}): fired when a group of new messages is made ready. Data is an array of messages. (See message.js).
+ * core.on("chat",(data)=>{}): fired when a new chat is loaded. Data is a chat object (see message.js).
+ */
+
 function tryUntilSuccess(f, times = 5, separation = 500) {
     try {
         f();
@@ -8,8 +15,6 @@ function tryUntilSuccess(f, times = 5, separation = 500) {
         }
     }
 }
-
-
 
 function addEventAPI(itm) {
     itm.events = {};

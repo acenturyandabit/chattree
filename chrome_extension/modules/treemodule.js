@@ -20,8 +20,9 @@ function hashColor (obj) {
         hash = ((hash << 5) - hash) + chr;
         hash |= 0; // Convert to 32bit integer
     }
+    hash=Math.abs(hash);
     hash %=2**24;//Convert to 24 bit integer
-    return `rgb(${((hash)&(255<<16))>>16},${((hash>>8)&(255<<8))>>8},${hash>>16})`;
+    return `rgb(${((hash)&(255<<16))>>16},${((hash)&(255<<8))>>8},${hash&255})`;
 };
 
 function matchContrast(col) {
