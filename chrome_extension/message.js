@@ -20,18 +20,16 @@ function _message() {
 // Chat Class (through function prototype)
 function _chat() {
     this.id = undefined;
-    this.isGroup = false; 
-    this.sender = undefined; //TODO how to get names
-    this.date = undefined;
-    this.content = undefined;
-    this.reactions = undefined;
-    this.repliedTo = undefined;
+    this.isGroup = false;
+    this.lastUpdated = undefined;
+    this.name = undefined;
+    this.msgCount = undefined;
     // Add more attributes
+    this.messages = {};
 
     this.toString = function () {
-        return "Message " + this.id + " from chat " + this.chatId
-            + "\nSender: " + this.senderId + "  Date: " + this.date
-            + "\nContents:\n" + this.content;
+        return "Chat " + this.id
+            + "\nGroupChat: " + this.isGroup + "  Last Updated: " + this.lastUpdated;
     }
 }
 
@@ -135,9 +133,16 @@ function refreshMessages() {
         let newData = JSON.parse(mutationList[0].target.innerHTML);
         console.log(newData);
 
-
         //  Load new chat
-        //chatTreeCore.fire("chat", chatObject);
+        let chatObject = new _chat();
+
+        chatObject.id = newData.focusChat.id;
+        chatObject.isGroup = newData.focusChat.group;
+        chatObject.lastUpdated = newData.focusChat.lastUpdated;
+        chatObject.name = newData.focusChat.name;
+        chatObject.msgCount = newData.focusChat.msgCount;
+
+        chatTreeCore.fire("chat", chatObject);
 
         // Load new messages
         let messageArray=[];
