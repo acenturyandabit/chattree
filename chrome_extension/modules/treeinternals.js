@@ -2,6 +2,7 @@ var chattreedata = {};
 var i = 1;
 var nodes = [];
 var connections = [];
+var chat;
 
 chatTreeCore.on("chat", (chat) => {
     //check for uniquenesss
