@@ -12,6 +12,7 @@ chatTreeCore.on("chat", (chat) => {
 
 
 chatTreeCore.on("message", (msg) => {
+    let chat = msg.chatId;
     //check for uniquenesss
     if (chattreedata[msg.chatId] == undefined) {
         chattreedata[msg.chatId] = {
@@ -24,7 +25,7 @@ chatTreeCore.on("message", (msg) => {
 function addMsg(msg,userDecision=false) {
 
     let txt = msg.content;
-    let chat = msg.chatId;
+    
     let from = msg.sender;
 
     
