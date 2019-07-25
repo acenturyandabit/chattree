@@ -17,7 +17,8 @@
                 "listmodule.js",
                 "getid.js",
                 "treeinternals.js",
-                "message.js"
+                "message.js",
+                "intercept.js"
             ]
         }
     ]

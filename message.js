@@ -27,12 +27,15 @@ function collectMessages() {
 
     let chatId = whoIamTalkingto();
 
+    let messageArray=[];
     let messagesScrape = document.querySelector("[aria-label='Messages']").querySelector("[id]").children;
     let dateCounter = 0;    // To keep track of dates
     let idCounter = 0;
 
     // First decide whether first scrape or not
-    
+    if (getLatestMessageId() !== undefined) {
+        idCounter = getLatestMessageId();
+    }
 
     // Loop through message groups. Note that Messenger orders starting index as top, oldest message loaded.
     // Message groups are 'blobs' of messages sent by the same person in a small timeframe
@@ -76,12 +79,14 @@ function collectMessages() {
 
                     // TODO: Replies, Reactions etc
                     chatTreeCore.fire("message", messageObject);
+                    messageArray.push(messageObject);
                     //addMsg(messageObject);
-                    console.log(messageObject.toString());
+                    //console.log(messageObject.toString());
                 }
             }
         }
     }
+    return messageArray;
 }
 
 /**
@@ -97,13 +102,8 @@ function refreshMessages() {
         console.log(mutationList);
     });
     observeNewMessages.observe(target, { subtree: true, childList: true });
-
-
 }
 
-function pushCache(chatId) {
-
-}
 
 /**
  * Section to call the collection function when we switch users; and store messages
@@ -117,10 +117,21 @@ chatTreeCore.on("urlChange", () => {
         try {
             let chatId = whoIamTalkingto();
             messageCache[chatId] = collectMessages();
-            //pushCache(chatId);
+            refreshMessages();
         } catch (e) {
             setTimeout(f, 100);
         }
     }
     setTimeout(f, 100);
 });
+
+
+/**
+ * TO BE REMOVED
+ * This just refreshes the message cache indiscriminantly and inefficiently every so or so seconds. 
+ */
+
+setInterval(() => {
+    chatTreeCore.fire("refreshMessages");
+    messageCache[whoIamTalkingto()] = collectMessages();
+}, 500);

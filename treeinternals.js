@@ -5,16 +5,16 @@ var nodes = [];
 var connections = [];
 
 function addMsg(msg) {
-    
+
     let txt = msg.content;
     let chat = msg.chatId;
     let from = msg.sender;
 
-    if (chattreedata[chat] == undefined){
+    if (chattreedata[chat] == undefined) {
         chattreedata[chat] = {};
         seqMessageRefs[chat] = [];
     }
-    if (chattreedata[chat][from] == undefined){
+    if (chattreedata[chat][from] == undefined) {
         chattreedata[chat][from] = {};
     }
     //for (var i = 1; i<100; i+=1){
@@ -25,7 +25,7 @@ function addMsg(msg) {
     } else console.warn(`Double up of message id ${msg.id} from ${from} in chat ${chat}`);
 
     if (msg.id == 0){   
-        var root = chattreedata[chat][from]["message"+i];
+        var root = chattreedata[chat][from]["message"+msg.id];
         nodes.push(root);
         }
     //i += 1;
@@ -37,15 +37,39 @@ function addMsg(msg) {
 }
 
 
-function retrieveTree(id){
+function retrieveTree(id) {
     return chattreedata[id];
 }
 
+function getChat(chatId) {
+    if (chattreedata[chatId] == undefined)
+        return undefined;
+    return chattreedata[chatId];
+}
+
+function createChat(chatId) {
+    chattreedata[chatId] = {
+        //name : name,             // Miscellaneous chat properties here
+    };
+}
+
 function getLatestMessageId(chatId) {
-    if (chattreedata[chatId] == undefined) return undefined;
+    if (chattreedata[chatId] == undefined)
+        return undefined;
     return chattreedata[chatId][chattreedata[chatId].length-1].id;
 }
 
 chatTreeCore.on("message",(msg)=>{
     addMsg(msg);
 });
+
+/**
+ * Create a tree from an existing message cache
+ */
+
+function createLinearTree(thread) {
+    let messages = messageCache[thread];
+    for (let i in messages) {
+        console.log(i.toString());
+    }
+}
