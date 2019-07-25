@@ -17,6 +17,23 @@ function _message() {
     }
 }
 
+// Chat Class (through function prototype)
+function _chat() {
+    this.id = undefined;
+    this.isGroup = false; 
+    this.sender = undefined; //TODO how to get names
+    this.date = undefined;
+    this.content = undefined;
+    this.reactions = undefined;
+    this.repliedTo = undefined;
+    // Add more attributes
+
+    this.toString = function () {
+        return "Message " + this.id + " from chat " + this.chatId
+            + "\nSender: " + this.senderId + "  Date: " + this.date
+            + "\nContents:\n" + this.content;
+    }
+}
 
 /**
  *
@@ -114,10 +131,15 @@ function refreshMessages() {
     } else collectedDOMData = document.getElementById("__collectedData");
 
     let observeNewMessages = new MutationObserver(function (mutationList, observer) {
-        // Load new messages
+        
         let newData = JSON.parse(mutationList[0].target.innerHTML);
         console.log(newData);
 
+
+        //  Load new chat
+        //chatTreeCore.fire("chat", chatObject);
+
+        // Load new messages
         let messageArray=[];
         
         newData.focusMessages.forEach( (msg)=> {
@@ -148,36 +170,6 @@ refreshMessages();
 
 
 
-/**
- * Section to call the collection function when we switch users; and store messages
- *
- */
-var messageCache = {};
-chatTreeCore.on("urlChange", () => {
-    //occasionally throws an error because messages take some finite time to load
-    //so keep doing it until we don't get the error
-    function f() {
-        try {
-            messageCache[whoIamTalkingto()] = collectMessages();
-            //refreshMessages();
-        } catch (e) {
-            setTimeout(f, 100);
-        }
-    }
-    setTimeout(f, 100);
-});
-
-
-/**
- * TO BE REMOVED
- * This just refreshes the message cache indiscriminantly and inefficiently every so or so seconds.
- */
-
-setInterval(() => {
-    chatTreeCore.fire("refreshMessages");
-    messageCache[whoIamTalkingto()] = collectMessages();
-    chatTreeCore.fire("afterRefreshMessages");
-}, 500);
 
 
 function whoIam(){
