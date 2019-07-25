@@ -113,23 +113,27 @@ function _chatTreeCore() {
 
         //for now, immediately load the module
     }
+
     this.loadModule = function (moduleName) {
         if (!this.availableModules[moduleName]) throw ("Module does not exist!");
 
 
         //create a window for it.
-        let win = document.createElement("div");
-        let close_btn = document.createElement("div");
-        let resize_btn = document.createElement("div");
+        var ID = function () { return '_' + Math.random().toString(36).substr(2, 9); };
+        var uniqueID = ID();
+        var UIsidebutton = htmlwrap(`<div id="${uniqueID}" class="_3szo _6y4w" tabindex="0"><div class="_3szq">${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
         let winds = {
             win: document.createElement("div"),
             topbar: document.createElement("div"),
             close_btn: document.createElement("div"),
             resize_btn: document.createElement("div"),
+            UIsidebutton: UIsidebutton,
+            unload_btn : document.createElement("div"),
             moving: false
         }
-
-
+        winds.unload_btn.innerHTML="&#10060";
+        winds.unload_btn.style.cssText=`height: 15px; width: 15px; right: 10px; position: absolute; text-align: center; font-weight: bold; font-size: 15px;`
+        winds.UIsidebutton.appendChild(winds.unload_btn);
         winds.close_btn.style.height = "15px";
         winds.close_btn.style.width = "15px";
         winds.resize_btn.style.background = "green";
@@ -173,13 +177,10 @@ function _chatTreeCore() {
         winds.topbar.appendChild(title);
 
         var i = 0;
-        var ID = function () { return '_' + Math.random().toString(36).substr(2, 9); };
-        var uniqueID = ID();
 
-        var UIsidebutton = htmlwrap(`<div id="${uniqueID}" class="_3szo _6y4w" tabindex="0"><div class="_3szq">${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
         UIsidebutton.addEventListener("click", UIshowwindow);
         
-        function UIsidebar(pid) {
+        function UIsidebar() {
             var lastbutton = document.querySelector("._1li_");
             var btnExist = document.getElementById(uniqueID);
             if (i == 0) {
@@ -198,7 +199,17 @@ function _chatTreeCore() {
         }
 
         //UI side button
-        var pid = setInterval(() => UIsidebar(pid), 300);
+        var pid = setInterval(() => UIsidebar(), 300);
+
+        function unloadModule(winds){
+            clearInterval(pid);
+            for (var idx in winds){if(idx!="moving"){ 
+               winds[idx].remove();
+            }}
+        }
+        winds.unload_btn.addEventListener("click",()=>{unloadModule(winds)});
+        
+
         //window visibility
         var window_status = 0;//By default, the window is visible=0
         function UIshowwindow() {
