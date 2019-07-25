@@ -11,6 +11,37 @@ function makeTree() {
     return nodes;
 }
 
+function hashColor (obj) {
+    var str=JSON.stringify(obj);
+    var hash = 0, i, chr;
+    if (str.length === 0) return hash;
+    for (i = 0; i < str.length; i++) {
+        chr = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    hash %=2**24;//Convert to 24 bit integer
+    return `rgb(${((hash)&(255<<16))>>16},${((hash>>8)&(255<<8))>>8},${hash>>16})`;
+};
+
+function matchContrast(col) {
+    //returns either black or white from either a #COLOR or a rgb(color)
+    cols = /\#(..)(..)(..)/i.exec(col)
+    if (!cols) {
+        cols = /rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i.exec(col);
+    } else {
+        cols = [cols[0], cols[1], cols[2], cols[3]];
+        cols[1] = parseInt(cols[1], 16);
+        cols[2] = parseInt(cols[2], 16);
+        cols[3] = parseInt(cols[3], 16);
+    }
+    if (!cols) throw "Invalid color: " + col;
+    let value = Math.round(((parseInt(cols[1]) * 299) +
+        (parseInt(cols[2]) * 587) +
+        (parseInt(cols[3]) * 114)) / 1000);
+    return (value > 125) ? 'black' : 'white';
+}
+
 chatTreeCore.registerModule("tree", {
     prettyName: "Chat Tree"
 }, function (core, div) {
@@ -134,7 +165,8 @@ chatTreeCore.registerModule("tree", {
             });
             let placeX = 0;
             //Create some text in the box
-            let text = currentElement.groupElement.text((abstractedNodes[currentElement.key].content || currentElement.key).toString()).cy(0).stroke("white").size(10);
+            let usrHashCol=hashColor(abstractedNodes[currentElement.key].senderId);
+            let text = currentElement.groupElement.text((abstractedNodes[currentElement.key].content || currentElement.key).toString()).cy(0).stroke(matchContrast(usrHashCol)).size(10);
             currentElement.estimatedWidth = text.bbox().w + 10;
             if (children.length) {
                 //add the elements to a group
@@ -166,7 +198,7 @@ chatTreeCore.registerModule("tree", {
                 reMoveBox = true;
             }
             //create a box for it
-            currentElement.rect = currentElement.groupElement.rect(text.bbox().w + 10, height).cx(placeX).cy(0).fill("blue").click(() => {
+            currentElement.rect = currentElement.groupElement.rect(text.bbox().w + 10, height).cx(placeX).cy(0).fill(usrHashCol).stroke({color:matchContrast(usrHashCol),width:1}).click(() => {
                 if (hotElement) {
                     linkElement(currentElement.key);
                 } else {
