@@ -2,17 +2,17 @@
 function _message() {
     this.id = undefined;
     this.chatId = undefined;
-    this.senderId = undefined; //TODO figure out how identically named users are handled.
-    this.sender = undefined;
+    this.senderId = undefined; 
+    this.sender = undefined; //TODO how to get names
     this.date = undefined;
     this.content = undefined;
-    this.reactions = { 'love': 0, 'laugh': 0, 'wow': 0, 'angry': 0, 'sad': 0, 'like': 0, 'dislike': 0 };
-    this.reply = undefined;
+    this.reactions = undefined;
+    this.repliedTo = undefined;
     // Add more attributes
 
     this.toString = function () {
         return "Message " + this.id + " from chat " + this.chatId
-            + "\nSender: " + this.sender + "  Date: " + this.date
+            + "\nSender: " + this.senderId + "  Date: " + this.date
             + "\nContents:\n" + this.content;
     }
 }
@@ -90,20 +90,62 @@ function collectMessages() {
     return messageArray;
 }
 
+
+
+
+
+
 /**
  *
  * Collects new messages
  *
  */
 function refreshMessages() {
-    let target = document.querySelector("[aria-label='Messages']").querySelector("[id]");
+
+    if (!document.getElementById("__collectedData")){
+
+        collectedDOMData = document.createElement('p');
+        collectedDOMData.id = '__collectedData';
+        collectedDOMData.style.height = 0;
+        collectedDOMData.style.overflow = 'hidden';
+        collectedDOMData.innerHTML = "";            // NO data yet
+        document.body.appendChild(collectedDOMData);
+
+    } else collectedDOMData = document.getElementById("__collectedData");
 
     let observeNewMessages = new MutationObserver(function (mutationList, observer) {
-        // Do stuff - load new messages
-        console.log(mutationList);
+        // Load new messages
+        let newData = JSON.parse(mutationList[0].target.innerHTML);
+        console.log(newData);
+
+        let messageArray=[];
+        
+        newData.focusMessages.forEach( (msg)=> {
+            //  Make a new Messasge Object and assign it to the recieved JSON values
+            let messageObject = new _message();
+
+            messageObject.id = msg.id;
+            messageObject.chatId = msg.chatId;
+            messageObject.senderId = msg.senderId;
+            messageObject.sender = undefined;
+            messageObject.date = msg.date;
+            messageObject.content = msg.content;
+            messageObject.reactions = msg.reactions;
+            messageObject.repliedTo = msg.repliedTo;
+                    
+            chatTreeCore.fire("message", messageObject);
+            messageArray.push(messageObject);
+        });
+
+        console.log(messageArray);
+
+        // TODO CODE HERE
+        
     });
-    observeNewMessages.observe(target, { subtree: true, childList: true });
+    observeNewMessages.observe(collectedDOMData, { subtree: true, childList: true });
 }
+refreshMessages();
+
 
 
 /**
