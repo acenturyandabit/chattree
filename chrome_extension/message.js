@@ -34,9 +34,9 @@ function collectMessages() {
     let idCounter = 0;
 
     // First decide whether first scrape or not
-    if (getLatestMessageId() !== undefined) {
-        idCounter = getLatestMessageId();
-    }
+    //if (getLatestMessageId() !== undefined) {
+    //    idCounter = getLatestMessageId();
+    //}
 
     // Loop through message groups. Note that Messenger orders starting index as top, oldest message loaded.
     // Message groups are 'blobs' of messages sent by the same person in a small timeframe

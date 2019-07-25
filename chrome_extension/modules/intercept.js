@@ -1,6 +1,4 @@
-
-
-function intercept() {
+var intercept = function() {
     var XHR = XMLHttpRequest.prototype;
     var send = XHR.send;
     var open = XHR.open;
@@ -79,3 +77,8 @@ function intercept() {
 }
 
 //batch_name=MessengerGraphQLThreadFetcher
+
+var xhrOverrideScript = document.createElement('script');
+xhrOverrideScript.type = 'text/javascript';
+xhrOverrideScript.innerHTML = "("+intercept.toString()+")();"
+document.head.prepend(xhrOverrideScript);
