@@ -3,22 +3,19 @@ var i = 1;
 var nodes = [];
 var connections = [];
 
+
 chatTreeCore.on("chat", (chat) => {
     //check for uniquenesss
-
-
-    //TODO
+    if(chattreedata[chat.id]== undefined){
+        chattreedata[chat.id] = chat;
+    }
 });
-
 
 chatTreeCore.on("message", (msg) => {
     let chat = msg.chatId;
     //check for uniquenesss
-    if (chattreedata[msg.chatId] == undefined) {
-        chattreedata[msg.chatId] = {
-            msgs:{}
-        };
-    }
+    chattreedata[chat].msgs[msg.id]=msg;
+    console.log("--------------");
 });
 
 
