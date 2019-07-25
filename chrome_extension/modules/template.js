@@ -9,13 +9,16 @@
  */
 chatTreeCore.registerModule("module_name",{
     prettyName:"Name of the module you want to see."
-}, function (core, div) {
-    core.on("message",(msg)=>{
-        //A message has been retrieved.
+}, function (div) {
+    //For more information on chatTreeCore's event firing, check out the core.js file.
+    /**
+     * div: a HTMLElement that represents the window space allocated to your module.
+     */
+    chatTreeCore.on("message",(msg)=>{
+        //A new message has been recieved! 
+        //For messagedata reference, check message.js.
     });
-    chatTreeCore.on("refreshMessages,urlChange", () => {
-        while (div.children.length){
-            div.children[0].remove();
-        }
+    chatTreeCore.on("urlChange", () => {
+        //Load a new message set due to changing URL.
     })
 })
