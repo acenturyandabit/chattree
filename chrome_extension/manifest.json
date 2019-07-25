@@ -13,12 +13,11 @@
                 "3pt/svg.min.js",
                 "3pt/JQ.js",
                 "core.js",
-                "treemodule.js",
-                "listmodule.js",
-                "getid.js",
-                "treeinternals.js",
+                "modules/intercept.js",
                 "message.js",
-                "intercept.js"
+                "modules/treemodule.js",
+                "modules/treeinternals.js",
+                "modules/listmodule.js"
             ]
         }
     ]

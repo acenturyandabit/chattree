@@ -1,3 +1,4 @@
+
 function addEventAPI(itm) {
     itm.events = {};
     itm.fire = function (e, args) {
@@ -87,6 +88,8 @@ function _chatTreeCore() {
             resize_btn: document.createElement("div"),
             moving: false
         }
+
+
         winds.close_btn.style.height = "15px";
         winds.close_btn.style.width= "15px";
         winds.resize_btn.style.background="green";
@@ -97,10 +100,9 @@ function _chatTreeCore() {
         winds.close_btn.style.cssFloat= "left";
         winds.topbar.appendChild(winds.close_btn);
         winds.topbar.appendChild(winds.resize_btn);
-
         winds.win.style.position = "absolute";
         winds.win.style.background = "white";
-        winds.win.style.zIndex = 301;
+        winds.win.style.zIndex = 300;
         winds.win.style.border = "1px solid grey";
         winds.win.style.borderRadius = "3px";
         winds.win.style.width = "200px";
@@ -113,25 +115,33 @@ function _chatTreeCore() {
         winds.topbar.style.width="100%";
         winds.topbar.style.background="blue";
         winds.win.appendChild(winds.topbar);
-        winds.win.addEventListener("mousedown", (e) => { if (e.target == winds.topbar) winds.moving = { dx: winds.win.offsetLeft - e.pageX, dy: winds.win.offsetTop - e.pageY } });
-        document.body.appendChild(winds.win);
-        winds.win.parentElement.addEventListener("mousemove", (e) => {
-            if (winds.moving) {
-                winds.win.style.left = e.pageX + winds.moving.dx + "px";
-                winds.win.style.top = e.pageY + winds.moving.dy + "px";
-            }
-        });
-        winds.win.parentElement.addEventListener("mouseup", (e) => {winds.moving=false;});
+        winds.topbar.addEventListener("mousedown", (e) => { winds.moving = { dx: winds.win.offsetLeft - e.pageX, dy: winds.win.offsetTop - e.pageY } });
+         document.body.appendChild(winds.win);
+         winds.win.parentElement.addEventListener("mousemove", (e) => {
+             if (winds.moving) {
+                 winds.win.style.left = e.pageX + winds.moving.dx + "px";
+                 winds.win.style.top = e.pageY + winds.moving.dy + "px";
+             }
+         });
+         winds.win.parentElement.addEventListener("mouseup", (e) => {winds.moving=false;});
 
 
-        //create button
+        var title=htmlwrap(`<div id="chat_tree_header" tabindex="0"><div>${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
+        title.style.color="white";
+        title.style.height="15px";
+        title.style.marginTop="0px";
+        winds.topbar.appendChild(title);
+
         var i=0;
-        var UIclearsidebutton;
-        var UIsidebutton = htmlwrap(`<div id="chat_tree_btn" class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
+        var ID = function () {return '_' + Math.random().toString(36).substr(2, 9);};
+        var uniqueID=ID();
+
+        var UIsidebutton = htmlwrap(`<div id="${uniqueID}" class="_3szo _6y4w" tabindex="0"><div class="_3szp"></div><div class="_3szq">${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
         UIsidebutton.addEventListener("click", UIshowwindow);
 
         function UIsidebar(pid) {
             var lastbutton = document.querySelector("._1li_");
+            var btnExist=document.getElementById(uniqueID);
             if (i == 0) {
                 try {
                     lastbutton.appendChild(UIsidebutton);
@@ -141,17 +151,16 @@ function _chatTreeCore() {
                     console.log("The rest of the document is not ready yet :(")
                 }
             }
-            if (i > 0) {UIsidebutton.remove(); lastbutton.appendChild(UIsidebutton); }
-
+            if (i > 0 && btnExist==null) { lastbutton.appendChild(UIsidebutton); }
         }
 
         //UI side button
-        var pid=setInterval(()=>UIsidebar(pid),300);
+        var pid = setInterval(() => UIsidebar(pid),300);
         //window visibility
-        var window_status=0;//By default, the window is visible=0
+        var window_status = 0;//By default, the window is visible=0
         function UIshowwindow(){
-          if(window_status==0){winds.win.style.visibility='hidden';  window_status=1;}
-          else{winds.win.style.visibility='visible';window_status=0;}
+          if(window_status == 0){winds.win.style.visibility='hidden';  window_status=1;}
+          else{ winds.win.style.visibility='visible'; window_status=0;}
         }
         //maximise window
         var originalwindow_height;
@@ -160,35 +169,43 @@ function _chatTreeCore() {
         var originalwindow_left;
         var screen_status=0; //non-zero for fullscreen
         function UIfullscreen(){
-          //var windows_pre=document.querySelector("SvgjsSvg1001");
           if (screen_status==0){
             originalwindow_width=winds.win.clientWidth;
             originalwindow_height=winds.win.clientHeight;
-            originalwindow_top=winds.win.clientTop;
-            originalwindow_left=winds.win.clentLeft;
-            winds.win.style.width="100%";
+            originalwindow_top=winds.win.offsetTop;
+            originalwindow_left=winds.win.offsetLeft;
+            winds.win.style.width ="100%";
             winds.win.style.height="100%";
             winds.win.style.left=0;
             winds.win.style.top=0;
             screen_status=1;
-          }else{//already fullscreen
-            winds.win.style.width=originalwindow_width +"px";
-            winds.win.style.height=originalwindow_height+"px";
-            winds.win.style.top=originalwindow_top+"px";
-            winds.win.style.left=originalwindow_left+"px";
+          }else if(screen_status==1){//already fullscreen
+            winds.win.style.width = originalwindow_width + "px";
+            winds.win.style.height = originalwindow_height + "px";
+            winds.win.style.top = originalwindow_top + "px";
+            winds.win.style.left = originalwindow_left + "px";
             screen_status=0;
           }
         }
         winds.inner = document.createElement("div");
-        winds.inner.style.height = "calc(100% - 18px)";//oddly specific i know
+        winds.inner.style.height = "calc(100% - 25px)";//oddly specific i know
         winds.inner.style.overflow = "auto";
         winds.inner.style.width = "100%";
         winds.win.appendChild(winds.inner);
-        this.activeModules.push(new this.availableModules[moduleName].fn(this, winds.inner));
-
+        this.activeModules.push({
+            module:new this.availableModules[moduleName].fn(this, winds.inner),
+            winds:winds
+        });
+        //this.activeModules[0].winds
         winds.close_btn.addEventListener("click",UIshowwindow);
         winds.resize_btn.addEventListener("click",UIfullscreen);
-
+        function clickon(){
+          for(var i=0;i<me.activeModules.length;i++){
+            me.activeModules[i].winds.win.style.zIndex=300;
+          }
+          winds.win.style.zIndex =301;
+        }
+        winds.win.addEventListener("mousedown",clickon);
     }
 
 }

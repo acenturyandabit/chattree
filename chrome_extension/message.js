@@ -19,15 +19,16 @@ function _message() {
 
 
 /**
- * 
+ *
  * Collects existing messages
- * 
+ *
  */
 function collectMessages() {
 
     let chatId = whoIamTalkingto();
 
     let messageArray=[];
+    if (!document.querySelector("[aria-label='Messages']"))return;//dont do anything if there is no element to consider
     let messagesScrape = document.querySelector("[aria-label='Messages']").querySelector("[id]").children;
     let dateCounter = 0;    // To keep track of dates
     let idCounter = 0;
@@ -60,7 +61,7 @@ function collectMessages() {
 
                 // TODO: Check that _aok class doesn't change after refresh etc
                 //  Images and Stickers use classes apart from _aok
-                //  aria-label seems to always contain the text of the messages */ 
+                //  aria-label seems to always contain the text of the messages */
 
                 if (messages[m].tagName == "DIV") {     // h4 hold nametag
 
@@ -90,9 +91,9 @@ function collectMessages() {
 }
 
 /**
- * 
+ *
  * Collects new messages
- * 
+ *
  */
 function refreshMessages() {
     let target = document.querySelector("[aria-label='Messages']").querySelector("[id]");
@@ -107,7 +108,7 @@ function refreshMessages() {
 
 /**
  * Section to call the collection function when we switch users; and store messages
- * 
+ *
  */
 var messageCache = {};
 chatTreeCore.on("urlChange", () => {
@@ -115,9 +116,8 @@ chatTreeCore.on("urlChange", () => {
     //so keep doing it until we don't get the error
     function f() {
         try {
-            let chatId = whoIamTalkingto();
-            messageCache[chatId] = collectMessages();
-            refreshMessages();
+            messageCache[whoIamTalkingto()] = collectMessages();
+            //refreshMessages();
         } catch (e) {
             setTimeout(f, 100);
         }
@@ -128,10 +128,24 @@ chatTreeCore.on("urlChange", () => {
 
 /**
  * TO BE REMOVED
- * This just refreshes the message cache indiscriminantly and inefficiently every so or so seconds. 
+ * This just refreshes the message cache indiscriminantly and inefficiently every so or so seconds.
  */
 
 setInterval(() => {
     chatTreeCore.fire("refreshMessages");
     messageCache[whoIamTalkingto()] = collectMessages();
+    chatTreeCore.fire("afterRefreshMessages");
 }, 500);
+
+
+function whoIam(){
+    //LATER
+    return ''+document.getElementsByClassName("_1vp5")[0].innerHTML;
+    // Possible way to do it? (add Id later)
+  }
+  
+  function whoIamTalkingto(){
+    var url=window.location.pathname;
+    return url.slice(3);
+  }
+  
