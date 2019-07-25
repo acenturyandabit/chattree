@@ -17,7 +17,6 @@ function _message() {
     }
 }
 
-
 /**
  *
  * Collects existing messages
