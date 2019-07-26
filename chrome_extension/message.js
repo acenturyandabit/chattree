@@ -124,12 +124,14 @@ function refreshMessages() {
 refreshMessages();
 
 
-
-
+var whoIthinkIam=undefined;
+chatTreeCore.on("message",(msg)=>{
+    whoIthinkIam=msg.user;
+})
 
 function whoIam(){
     //LATER
-    return ''+document.getElementsByClassName("_1vp5")[0].innerHTML;
+    return whoIthinkIam;
     // Possible way to do it? (add Id later)
   }
   

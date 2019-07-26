@@ -257,7 +257,7 @@ chatTreeCore.registerModule("tree", {
             });
             let placeX = 0;
             //Create some text in the box
-            if (!abstractedNodes[currentElement.key].senderId)abstractedNodes[currentElement.key].senderId='me';
+            if (!abstractedNodes[currentElement.key].senderId)abstractedNodes[currentElement.key].senderId=abstractedNodes[currentElement.key].user;
             let usrHashCol = hashColor(abstractedNodes[currentElement.key].senderId);
             let text = currentElement.groupElement.text((abstractedNodes[currentElement.key].content || currentElement.key).toString()).cy(0).stroke(matchContrast(usrHashCol)).size(10);
             currentElement.estimatedWidth = text.bbox().w + 10;
