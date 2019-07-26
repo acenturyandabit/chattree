@@ -85,6 +85,27 @@ function setToChatColor(el, retries = 3) {
 }
 
 function _chatTreeCore() {
+
+    let managedSidebarItems = [];
+
+
+    setInterval(() => {
+        managedSidebarItems.forEach((v, i) => {
+            if (v.careColor){
+                setToChatColor(v.careColor);
+            }
+            if (v.element.getRootNode() != document) {
+                try {
+                    document.querySelector("._1li_").appendChild(v.element);
+                } catch (e) {
+
+                }
+            }
+        })
+    },300);
+
+
+
     let me = this;
     this.availableModules = {};
     this.activeModules = [];
@@ -101,18 +122,8 @@ function _chatTreeCore() {
     creationBars.style.display = "none";
     //<div class="_3szq">Chattree settings</div>
     UIsidebutton.addEventListener("click", () => { creationBars.style.display = (creationBars.style.display == "block") ? "none" : "block"; });
-    setInterval(() => {
-        if (UIsidebutton.getRootNode() != document) {
-            setToChatColor(UIsidebutton);
-            try {
-                document.querySelector("._1li_").appendChild(UIsidebutton);
-                document.querySelector("._1li_").appendChild(creationBars);
-            } catch (e) {
-
-            }
-        }
-    }, 300)
-
+    managedSidebarItems.push({careColor:UIsidebutton,element:UIsidebutton});
+    managedSidebarItems.push({element:creationBars});
 
 
     /**
@@ -212,23 +223,19 @@ function _chatTreeCore() {
         * continuously check if the button in the side bar alredy exist
         *if no, add "chat tree"/"item list" button at the end of the side bar
         */
-        function UIsidebar() {
-            var lastbutton = document.querySelector("._1li_");
-            var btnExist = document.getElementById(uniqueID);
-            if (btnExist == null) {
-                lastbutton.appendChild(UIsidebutton);
-                setToChatColor(winds.topbar);
-            }
-        }
-
-        //check if add side button is needed every 300 milliseconds
-        var pid = setInterval(() => UIsidebar(), 300);
+       managedSidebarItems.push({element:UIsidebutton,careColor:winds.topbar});
 
         /*
         *function to unload module of unload button on the side bar is clicked
         */
         function unloadModule(winds) {
-            clearInterval(pid);
+            //remove the item from the managed sidebar.
+            for (let i=0;i<managedSidebarItems.length;i++){
+                if (managedSidebarItems[i].element==UIsidebutton){
+                    managedSidebarItems.splice(i,1);
+                    break;
+                }
+            }
             for (var idx in winds) {
                 if (idx != "moving") {
                     winds[idx].remove();
