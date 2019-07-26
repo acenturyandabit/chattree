@@ -88,7 +88,12 @@ function _chatTreeCore() {
     UIsidebutton.addEventListener("click", () => { creationBars.style.display = (creationBars.style.display == "block") ? "none" : "block"; });
     setInterval(() => {
         if (UIsidebutton.getRootNode() != document) {
-            UIsidebutton.style.background = window.getComputedStyle(document.querySelector("._6yme")).background;
+            try{
+                UIsidebutton.style.background = window.getComputedStyle(document.querySelector("._6yme")).background;
+            }catch (e){
+                UIsidebutton.style.background="blue";
+            }
+            
             document.querySelector("._1li_").appendChild(UIsidebutton);
             document.querySelector("._1li_").appendChild(creationBars);
         }
@@ -201,7 +206,12 @@ function _chatTreeCore() {
             }
             if (i > 0 && btnExist == null) {
                 lastbutton.appendChild(UIsidebutton);
-                winds.topbar.style.background=window.getComputedStyle(document.querySelector("._6yme")).background;
+                try{
+                    winds.topbar.style.background=window.getComputedStyle(document.querySelector("._6yme")).background;
+                }catch (e){
+                    winds.topbar.style.background="blue";
+                }
+                
             }
         }
 
