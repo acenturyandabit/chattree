@@ -22,9 +22,10 @@ chatTreeCore.registerModule("list", {
         for (let i = 0; i < div.children.length; i++) {
             if (Number(div.children[i].dataset.date) > msg.date) {
                 div.insertBefore(htmlwrap(`<p data-date="${msg.date}" data-id="${msg.id}">${new _message(msg)}</p>`), div.children[i]);
-                break;
+                return;
             }
         }
+        div.appendChild(htmlwrap(`<p data-date="${msg.date}" data-id="${msg.id}">${new _message(msg)}</p>`));
     })
     chatTreeCore.on("urlChange", () => {
         while (div.children.length) {
