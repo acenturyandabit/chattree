@@ -111,7 +111,7 @@ function refreshMessages() {
 
             messageObject.id = msg.id;
             messageObject.chatId = msg.chatId;
-            messageObject.senderId = msg.senderId;
+            messageObject.senderId = chattreedata[msg.chatId].user;
             messageObject.sender = msg.sender;
             messageObject.date = msg.date;
             messageObject.content = msg.content;
