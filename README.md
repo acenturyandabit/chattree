@@ -24,4 +24,18 @@ The issues that remain include:
 
 - Some sizing issues with new buttons on the sidebar: after more than 3 sidebars the window starts shifting around uncomfortably
 - When users login / logout on the same device they may be able to see other users' messages
-- 
+
+
+
+## Potential user preference
+
+There are still some potential issues due to user preference:
+
+- Some users may prefer to separate instances of Chattree windows when messaging different people.
+
+## Future Development
+
+To people who might intend to optimise the project:
+
+- The project is implemented  using Google Extension. This may limit the scope of users. 
+- At the moment, the tree is structured based on  manual setting and replies. NLP(Natural Language Processing) could potantially optimise user experiences.
