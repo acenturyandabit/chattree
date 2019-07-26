@@ -361,3 +361,8 @@ window.addEventListener("beforeunload", () => {
     });
     localStorage.setItem("chattreecoredata", JSON.stringify(amlist));
 })
+
+/*chatTreeCore.on("urlChange",()=>{
+    //document.querySelector("._4u-c._1wfr._9hq").style.height=(document.querySelector("[aria-label='New message']").clientHeight-document.querySelector("[aria-label='New message']").clientHeight-document.querySelector("._673w._6ynl").clientHeight)+"px";
+    document.querySelector("._4u-c._4_j9._9hq").style.height=(document.querySelector("._mh6._wsc").clientHeight-document.querySelector("[aria-label='New message']").clientHeight-document.querySelector("._673w._6ynl").clientHeight)+"px";
+})*/

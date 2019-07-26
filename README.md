@@ -15,3 +15,6 @@ The project is hosted open source on our github [our github repository](http://g
 If you've noticed a bug, feel free to open an issue or submit a pull request! 
 
 Alternatively, you can code your own module based on the template file in `modules/template.js`.
+
+## Remaining issues
+Sadly we couldn't squash all the bugs that were in the project, though we got pretty far!
