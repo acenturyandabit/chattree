@@ -246,7 +246,7 @@ chatTreeCore.registerModule("tree", {
                 else {childOfCe = ce; ce = abstractedNodes[ce].parent;}
             }
             //root case
-            if (!abstractedNodes[ce].parent || abstractedNodes[ce].parent == ce){
+            if ((!abstractedNodes[ce].parent || abstractedNodes[ce].parent == ce)&&ce==hotElement){
                 ceIsRoot=true; linkParentAsChild=true; }
             if(linkParentAsChild==false){
                 abstractedNodes[hotElement].parent = id;
@@ -260,7 +260,7 @@ chatTreeCore.registerModule("tree", {
                     userCommit(ce, abstractedNodes[ce].parent);
                     me.render(chattreedata[whoIamTalkingto()].msgs); }
                 else{ abstractedNodes[childOfCe].parent = undefined; 
-                    abstractedNodes[ce].parent  = hotElement;
+                    abstractedNodes[ce].parent  = id;
                     userCommit(childOfCe, abstractedNodes[childOfCe].parent);
                     userCommit(ce, abstractedNodes[ce].parent);
                     me.render(chattreedata[whoIamTalkingto()].msgs);
