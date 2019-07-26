@@ -69,6 +69,21 @@ function htmlwrap(html, el) {
 }
 
 
+function setToChatColor(el, retries = 3) {
+    try {
+        el.style.background = window.getComputedStyle(document.querySelector("._6yme")).background;
+    } catch (e) {
+        if (chattreedata[whoIamTalkingto()] && chattreedata[whoIamTalkingto()].color) {
+            el.style.background = chattreedata[whoIamTalkingto()].color;
+        } else {
+            if (retries > 0) setTimeout(() => { setToChatColor(el, retries - 1) }, 300);//try again after 300ms, up to 3 times
+            else {
+                el.style.background = "blue";
+            }
+        }
+    }
+}
+
 function _chatTreeCore() {
     let me = this;
     this.availableModules = {};
@@ -88,12 +103,7 @@ function _chatTreeCore() {
     UIsidebutton.addEventListener("click", () => { creationBars.style.display = (creationBars.style.display == "block") ? "none" : "block"; });
     setInterval(() => {
         if (UIsidebutton.getRootNode() != document) {
-            try{
-                UIsidebutton.style.background = window.getComputedStyle(document.querySelector("._6yme")).background;
-            }catch (e){
-                UIsidebutton.style.background="blue";
-            }
-            
+            setToChatColor(UIsidebutton);
             document.querySelector("._1li_").appendChild(UIsidebutton);
             document.querySelector("._1li_").appendChild(creationBars);
         }
@@ -115,17 +125,17 @@ function _chatTreeCore() {
             options: options
         }
         //also put a button in the creationbars that loads the module.
-        let mkbtn=htmlwrap(`<div class="_3szo _6y4w" tabindex="0"><div class="_3szq" style="margin-left:10px">Load ${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
+        let mkbtn = htmlwrap(`<div class="_3szo _6y4w" tabindex="0"><div class="_3szq" style="margin-left:10px">Load ${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
         creationBars.appendChild(mkbtn);
-        mkbtn.addEventListener("click",()=>{
+        mkbtn.addEventListener("click", () => {
             me.loadModule(moduleName);
-            creationBars.style.display="none";
+            creationBars.style.display = "none";
         })
 
         //for now, immediately load the module
     }
 
-    
+
     this.loadModule = function (moduleName) {
         if (!this.availableModules[moduleName]) throw ("Module does not exist!");
 
@@ -140,11 +150,11 @@ function _chatTreeCore() {
             close_btn: document.createElement("div"),
             resize_btn: document.createElement("div"),
             UIsidebutton: UIsidebutton,
-            unload_btn : document.createElement("div"),
+            unload_btn: document.createElement("div"),
             moving: false
         }
-        winds.unload_btn.innerHTML="&#10060";
-        winds.unload_btn.style.cssText=`height: 15px; width: 15px; right: 10px; position: absolute; text-align: center; font-weight: bold; font-size: 15px;`
+        winds.unload_btn.innerHTML = "&#10060";
+        winds.unload_btn.style.cssText = `height: 15px; width: 15px; right: 10px; position: absolute; text-align: center; font-weight: bold; font-size: 15px;`
         winds.UIsidebutton.appendChild(winds.unload_btn);
         winds.close_btn.style.height = "15px";
         winds.close_btn.style.width = "15px";
@@ -191,7 +201,7 @@ function _chatTreeCore() {
         var i = 0;
 
         UIsidebutton.addEventListener("click", UIshowwindow);
-        
+
         function UIsidebar() {
             var lastbutton = document.querySelector("._1li_");
             var btnExist = document.getElementById(uniqueID);
@@ -206,26 +216,23 @@ function _chatTreeCore() {
             }
             if (i > 0 && btnExist == null) {
                 lastbutton.appendChild(UIsidebutton);
-                try{
-                    winds.topbar.style.background=window.getComputedStyle(document.querySelector("._6yme")).background;
-                }catch (e){
-                    winds.topbar.style.background="blue";
-                }
-                
+                setToChatColor(winds.topbar);
             }
         }
 
         //UI side button
         var pid = setInterval(() => UIsidebar(), 300);
 
-        function unloadModule(winds){
+        function unloadModule(winds) {
             clearInterval(pid);
-            for (var idx in winds){if(idx!="moving"){ 
-               winds[idx].remove();
-            }}
+            for (var idx in winds) {
+                if (idx != "moving") {
+                    winds[idx].remove();
+                }
+            }
         }
-        winds.unload_btn.addEventListener("click",()=>{unloadModule(winds)});
-        
+        winds.unload_btn.addEventListener("click", () => { unloadModule(winds) });
+
 
         //window visibility
         var window_status = 0;//By default, the window is visible=0
@@ -264,6 +271,7 @@ function _chatTreeCore() {
         winds.inner.style.width = "100%";
         winds.win.appendChild(winds.inner);
         this.activeModules.push({
+            type: moduleName,
             module: new this.availableModules[moduleName].fn(this, winds.inner),
             winds: winds
         });
@@ -278,11 +286,19 @@ function _chatTreeCore() {
         }
         winds.win.addEventListener("mousedown", clickon);
     }
-
+    this.loadFrom = function (arr) {
+        //wait 0.5s for everything to settle down (this could be a loooot better)
+        setTimeout(() => {
+            arr.forEach((v) => {
+                me.loadModule(v);
+            })
+        }, 500);
+    }
 }
 
 let chatTreeCore = new _chatTreeCore();
 
+chatTreeCore.loadFrom(JSON.parse(localStorage.getItem("chattreecoredata") || "[]"));
 
 //Detect when the window url has changed, and fire an event in the core when this happens
 var preURL = "";
@@ -291,4 +307,9 @@ setInterval(() => {
         preURL = window.location.href;
         chatTreeCore.fire("urlChange", preURL);
     }
-}, 300)
+}, 300);
+
+window.addEventListener("beforeunload", () => {
+    let amlist = chatTreeCore.activeModules.map((i) => i.type);
+    localStorage.setItem("chattreecoredata", JSON.stringify(amlist));
+})
