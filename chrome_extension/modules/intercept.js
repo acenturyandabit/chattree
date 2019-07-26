@@ -197,7 +197,8 @@ var wsHookFunction = function() {
     }
     var after = wsHook.after = function (messageEvent, url, wsObject) {
         console.log("Received message from " + url + " : " + messageEvent.data);
-        return e
+        console.log(messageEvent)
+        return messageEvent
     }
     var modifyUrl = wsHook.modifyUrl = function(url) {
         return url
@@ -254,6 +255,7 @@ var wsHookFunction = function() {
 
         return WSObject
     }
+    console.info("wsHook Loaded");
     })();
 }
 
