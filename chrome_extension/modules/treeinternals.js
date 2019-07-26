@@ -34,7 +34,8 @@ function decideTree(tree, newMsg) {
 
 
 function userCommit(key, data) {//writing user changes.
-    chattreedata[whoIamTalkingto()].msgs[key] = data;
+
+    chattreedata[whoIamTalkingto()].msgs[key].parent = data;
 }
 
 window.addEventListener("beforeunload",()=>{
