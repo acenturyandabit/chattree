@@ -6,7 +6,7 @@
     "content_scripts": [
         {
             "matches": [
-                "*://www.messenger.com/t/*",
+                "*://www.messenger.com/*",
                 "*://www.facebook.com/messages/t/*"
             ],
             "js": [
