@@ -21,7 +21,6 @@ chatTreeCore.on("message", (msg) => {
         decideTree(chattreedata[chat], msg);
         chattreedata[chat].msgs[msg.id] = msg;
     }
-    console.log("--------------");
 });
 
 

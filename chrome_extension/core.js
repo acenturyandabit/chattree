@@ -195,39 +195,35 @@ function _chatTreeCore() {
         });
         winds.win.parentElement.addEventListener("mouseup", (e) => { winds.moving = false; });
 
-
         var title = htmlwrap(`<div id="chat_tree_header" tabindex="0"><div>${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
         title.style.color = "white";
         title.style.height = "15px";
         title.style.marginTop = "0px";
         winds.topbar.appendChild(title);
-
-        var i = 0;
+        //now windows are created 
 
         UIsidebutton.addEventListener("click", UIshowwindow);
-
+        
+        /*
+        * continuously check if the button in the side bar alredy exist
+        *if no, add "chat tree"/"item list" button at the end of the side bar
+        */
         function UIsidebar() {
             var lastbutton = document.querySelector("._1li_");
             var btnExist = document.getElementById(uniqueID);
-            if (i == 0) {
-                try {
-                    lastbutton.appendChild(UIsidebutton);
-                    i++;
-                }
-                catch (e) {
-                    console.log("The rest of the document is not ready yet :(")
-                }
-            }
-            if (i > 0 && btnExist == null) {
+            if (btnExist == null) {
                 lastbutton.appendChild(UIsidebutton);
                 setToChatColor(winds.topbar);
             }
         }
 
-        //UI side button
+        //check if add side button is needed every 300 milliseconds
         var pid = setInterval(() => UIsidebar(), 300);
 
-        function unloadModule(winds) {
+        /*
+        *function to unload module of unload button on the side bar is clicked
+        */
+        function unloadModule(winds){
             clearInterval(pid);
             for (var idx in winds) {
                 if (idx != "moving") {
@@ -238,18 +234,25 @@ function _chatTreeCore() {
         winds.unload_btn.addEventListener("click", () => { unloadModule(winds) });
 
 
-        //window visibility
+       
         var window_status = 0;//By default, the window is visible=0
+        /*
+        * adjust windows visibility
+        */
         function UIshowwindow() {
             if (window_status == 0) { winds.win.style.visibility = 'hidden'; window_status = 1; }
             else { winds.win.style.visibility = 'visible'; window_status = 0; }
         }
+        
         //maximise window
         var originalwindow_height;
         var originalwindow_width;
         var originalwindow_top;
         var originalwindow_left;
         var screen_status = 0; //non-zero for fullscreen
+        /*
+        *set the window to full screen && save the original windows' status
+        */
         function UIfullscreen() {
             if (screen_status == 0) {
                 originalwindow_width = winds.win.clientWidth;
@@ -279,7 +282,7 @@ function _chatTreeCore() {
             module: new this.availableModules[moduleName].fn(this, winds.inner),
             winds: winds
         });
-        //this.activeModules[0].winds
+
         winds.close_btn.addEventListener("click", UIshowwindow);
         winds.resize_btn.addEventListener("click", UIfullscreen);
         function clickon() {
