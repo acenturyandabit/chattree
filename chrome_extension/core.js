@@ -148,14 +148,14 @@ function _chatTreeCore() {
         })
 
         //Load if we want to load it
-        while (this.immediateLoad[moduleName]) {
-            this.loadModule(moduleName);
-            this.immediateLoad[moduleName]--;
+        if (this.immediateLoad[moduleName]) while (this.immediateLoad[moduleName].length) {
+            let data=this.immediateLoad[moduleName].pop();
+            this.loadModule(moduleName,data);
         }
     }
 
 
-    this.loadModule = function (moduleName) {
+    this.loadModule = function (moduleName, obj) {
         if (!this.availableModules[moduleName]) throw ("Module does not exist!");
 
 
@@ -262,6 +262,12 @@ function _chatTreeCore() {
                 screen_status = 0;
             }
         }
+        if (obj) {
+            winds.win.style.width = obj.w + "px";
+            winds.win.style.height = obj.h + "px";
+            winds.win.style.top = obj.y + "px";
+            winds.win.style.left = obj.x + "px";
+        }
         winds.inner = document.createElement("div");
         winds.inner.style.height = "calc(100% - 25px)";//oddly specific i know
         winds.inner.style.overflow = "auto";
@@ -287,7 +293,7 @@ function _chatTreeCore() {
         *function to unload module of unload button on the side bar is clicked
         */
         function unloadModule(winds) {
-            //remove the item from the managed sidebar.
+            //remove the let childs = Array.from(div.children);item from the managed sidebar.
             for (let i = 0; i < managedSidebarItems.length; i++) {
                 if (managedSidebarItems[i].element == UIsidebutton) {
                     managedSidebarItems.splice(i, 1);
@@ -314,8 +320,8 @@ function _chatTreeCore() {
         //wait 0.5s for everything to settle down (this could be a loooot better)
         this.immediateLoad = {};
         arr.forEach((v) => {
-            if (!this.immediateLoad[v]) this.immediateLoad[v] = 0;
-            this.immediateLoad[v]++;
+            if (!this.immediateLoad[v.type]) this.immediateLoad[v.type] = [];
+            this.immediateLoad[v.type].push(v);
         })
     }
 }
@@ -336,6 +342,14 @@ setInterval(() => {
 }, 300);
 
 window.addEventListener("beforeunload", () => {
-    let amlist = chatTreeCore.activeModules.map((i) => i.type);
+    let amlist = chatTreeCore.activeModules.map((i) => {
+        return {
+            type: i.type,
+            w: i.winds.win.clientWidth,
+            h: i.winds.win.clientHeight,
+            x: i.winds.win.offsetLeft,
+            y: i.winds.win.offsetTop
+        }
+    });
     localStorage.setItem("chattreecoredata", JSON.stringify(amlist));
 })

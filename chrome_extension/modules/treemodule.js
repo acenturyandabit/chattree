@@ -177,7 +177,15 @@ chatTreeCore.registerModule("tree", {
         for (let i in abstractedNodes) {
             let currentNode = i;
             let depth = 0;
+            let seens = {};
             while (abstractedNodes[currentNode].parent != currentNode) {
+                if (seens[currentNode]) {
+                    console.log("Infinite loop! Rectifiying and exiting...");
+                    abstractedNodes[currentNode].parent = undefined;
+                    userCommit(currentNode, undefined);
+                    break;
+                }
+                seens[currentNode]=true;
                 currentNode = abstractedNodes[currentNode].parent;
                 depth++;
             }
@@ -268,6 +276,7 @@ chatTreeCore.registerModule("tree", {
             });
             let placeX = 0;
             //Create some text in the box
+            if (!abstractedNodes[currentElement.key].senderId)abstractedNodes[currentElement.key].senderId='me';
             let usrHashCol = hashColor(abstractedNodes[currentElement.key].senderId);
             let text = currentElement.groupElement.text((abstractedNodes[currentElement.key].content || currentElement.key).toString()).cy(0).stroke(matchContrast(usrHashCol)).size(10);
             currentElement.estimatedWidth = text.bbox().w + 10;
