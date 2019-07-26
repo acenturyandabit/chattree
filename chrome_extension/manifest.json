@@ -18,7 +18,8 @@
                 "modules/treemodule.js",
                 "modules/treeinternals.js",
                 "modules/listmodule.js"
-            ]
+            ],
+            "run_at":"document_start"
         }
     ]
 }

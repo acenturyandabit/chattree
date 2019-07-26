@@ -2,7 +2,7 @@
 function _message(data) {
     this.id = undefined;
     this.chatId = undefined;
-    this.senderId = undefined; 
+    this.senderId = undefined;
     this.sender = undefined; //TODO how to get names
     this.date = undefined;
     this.content = undefined;
@@ -10,10 +10,10 @@ function _message(data) {
     this.repliedTo = undefined;
     this.user = undefined;
     // Add more attributes
-    
+
     // if data object provided, load from data
-    if (data){
-        Object.assign(this,data);
+    if (data) {
+        Object.assign(this, data);
     }
 
     this.toString = function () {
@@ -48,7 +48,7 @@ function _chat() {
  */
 function refreshMessages() {
 
-    if (!document.getElementById("__collectedData")){
+    if (!document.getElementById("__collectedData")) {
 
         collectedDOMData = document.createElement('p');
         collectedDOMData.id = '__collectedData';
@@ -60,7 +60,7 @@ function refreshMessages() {
     } else collectedDOMData = document.getElementById("__collectedData");
 
     let observeNewMessages = new MutationObserver(function (mutationList, observer) {
-        
+
         let newData = JSON.parse(mutationList[0].target.innerHTML);
         console.log(newData);
 
@@ -68,7 +68,7 @@ function refreshMessages() {
         if (newData.focusChat) {
             //  Load new chat
             let chatObject = new _chat();
-     
+
             chatObject.id = newData.focusChat.id;
             chatObject.isGroup = newData.focusChat.group;
             chatObject.actors = newData.focusChat.actors;
@@ -80,9 +80,9 @@ function refreshMessages() {
             chatTreeCore.fire("chat", chatObject);
 
             // Load new messages
-            let messageArray=[];
-            
-            newData.focusMessages.forEach( (msg)=> {
+            let messageArray = [];
+
+            newData.focusMessages.forEach((msg) => {
                 //  Make a new Messasge Object and assign it to the recieved JSON values
                 let messageObject = new _message();
 
@@ -95,16 +95,16 @@ function refreshMessages() {
                 messageObject.reactions = msg.reactions;
                 messageObject.repliedTo = msg.repliedTo;
                 if (newData.currentUser) messageObject.user = newData.currentUser;
-                        
+
                 chatTreeCore.fire("message", messageObject);
                 messageArray.push(messageObject);
             });
 
             console.log(messageArray);
             // TODO CODE HERE
-            chatTreeCore.fire("postMessageLoad",messageArray);
+            chatTreeCore.fire("postMessageLoad", messageArray);
         }
-    // OR check for new user message
+        // OR check for new user message
         else if (newData.newUserMessage) {
             let messageObject = new _message();
             let msg = newData.newUserMessage;
@@ -117,7 +117,7 @@ function refreshMessages() {
             messageObject.content = msg.content;
             messageObject.reactions = msg.reactions;
             messageObject.repliedTo = msg.repliedTo;
-                    
+
             chatTreeCore.fire("message", messageObject);
 
             // TODO update msgCount?
@@ -125,22 +125,24 @@ function refreshMessages() {
     });
     observeNewMessages.observe(collectedDOMData, { subtree: true, childList: true });
 }
-refreshMessages();
-
-
-var whoIthinkIam=undefined;
-chatTreeCore.on("message",(msg)=>{
-    whoIthinkIam=msg.user;
+document.addEventListener("DOMContentLoaded", () => {
+    refreshMessages();
 })
 
-function whoIam(){
+
+
+var whoIthinkIam = undefined;
+chatTreeCore.on("message", (msg) => {
+    if (msg.user) whoIthinkIam = msg.user;
+})
+
+function whoIam() {
     //LATER
     return whoIthinkIam;
     // Possible way to do it? (add Id later)
-  }
-  
-  function whoIamTalkingto(){
-    var url=window.location.pathname;
+}
+
+function whoIamTalkingto() {
+    var url = window.location.pathname;
     return url.slice(3);
-  }
-  
+}

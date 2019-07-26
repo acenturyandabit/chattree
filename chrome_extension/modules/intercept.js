@@ -141,7 +141,7 @@ var intercept = function() {
 var xhrOverrideScript = document.createElement('script');
 xhrOverrideScript.type = 'text/javascript';
 xhrOverrideScript.innerHTML = "("+intercept.toString()+")();"
-document.head.prepend(xhrOverrideScript);
+document.children[0].appendChild(xhrOverrideScript);
 
 
 
@@ -260,4 +260,4 @@ var wsHookFunction = function() {
 var wsHookScript = document.createElement('script');
 wsHookScript.type = 'text/javascript';
 wsHookScript.innerHTML = "var wsHook = {}; ("+wsHookFunction.toString()+")();"
-document.head.prepend(wsHookScript);
+document.children[0].appendChild(wsHookScript);
