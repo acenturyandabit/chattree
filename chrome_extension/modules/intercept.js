@@ -192,12 +192,78 @@ var wsHookFunction = function() {
     }
 
     var before = wsHook.before = function (data, url, wsObject) {
-        console.log("Sending message to " + url + " : " + data);
-        return data
+        //console.log("Sending message to " + url + " : " + data);
+        return data;
     }
     var after = wsHook.after = function (messageEvent, url, wsObject) {
-        console.log("Received message from " + url + " : " + messageEvent.data);
-        console.log(messageEvent)
+        
+        //To get live messages from other users through the chat web socket
+
+        //Message data typically always has more than 10 bytes
+        if (messageEvent.data && messageEvent.data.byteLength > 11 && messageEvent.data.toString() === "[object ArrayBuffer]") {
+            
+            byteArray = new Uint8Array(messageEvent.data);
+            // Common signature found at the beginning of all recieve message byte streams:
+            if (byteArray.slice(5,10).toString() === "47,116,95,109,115" && byteArray[12] == 123) {
+                
+                // Convert byte array to a string with JSON data
+                let asciiString = "";
+                byteArray.forEach((char) => asciiString+=String.fromCharCode(char));
+
+                // The first few bytes are non-JSON:
+                asciiString = asciiString.slice(asciiString.indexOf("{"));
+                
+                if (asciiString.includes("body")) { // Message streams (unlike video) have body
+                    
+                    let jsonData = JSON.parse(asciiString);
+                    
+                    if (jsonData.deltas && jsonData.deltas[0] && jsonData.deltas[0].class && jsonData.deltas[0].class === "NewMessage" && jsonData.deltas[0].body) {
+
+                        console.info("New Message Recieved. JSON:");
+                        console.log(jsonData);
+
+                        // Msg object instantiate
+                        let newMsg = new Object();
+                        newMsg.id = jsonData.deltas[0].messageMetadata.messageId;
+                        newMsg.chatId = jsonData.deltas[0].messageMetadata.threadKey.threadFbId; //or userKey? || jsonResponse.payload.actions[0].other_user_fbid;
+                        newMsg.senderId = jsonData.deltas[0].messageMetadata.actorFbId;
+                        newMsg.sender = undefined;
+                        newMsg.date = jsonData.deltas[0].messageMetadata.timestamp;
+                        newMsg.content = jsonData.deltas[0].body;
+                        newMsg.reactions = undefined;
+                        newMsg.repliedTo = undefined; //TODO
+                        console.info(`${newMsg.id} Added.`);
+                    
+                        let data = new Object();
+                        data.newOtherUserMessage = newMsg;   //newUserMessage used by message.js
+                        
+                        // Create DOM element to 'bridge' data to our extension code
+                        let collectedDOMData = undefined;
+                        if (!document.getElementById("__collectedData")){
+                            collectedDOMData = document.createElement('p');
+                            collectedDOMData.id = '__collectedData';
+                            collectedDOMData.style.height = 0;
+                            collectedDOMData.style.overflow = 'hidden';
+                            document.body.appendChild(collectedDOMData);
+                        } else collectedDOMData = document.getElementById("__collectedData");
+                        
+                        // JSON the new data
+                        collectedDOMData.innerText = JSON.stringify(data);
+
+
+                    }
+
+                }
+
+               
+
+
+            }
+        }
+
+
+
+
         return messageEvent
     }
     var modifyUrl = wsHook.modifyUrl = function(url) {

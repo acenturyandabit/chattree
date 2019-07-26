@@ -104,7 +104,7 @@ function refreshMessages() {
             // TODO CODE HERE
             chatTreeCore.fire("postMessageLoad", messageArray);
         }
-        // OR check for new user message
+        // OR check for new current user message
         else if (newData.newUserMessage) {
             let messageObject = new _message();
             let msg = newData.newUserMessage;
@@ -122,11 +122,30 @@ function refreshMessages() {
 
             // TODO update msgCount?
         }
+        // OR check for new other user message
+        else if (newData.newOtherUserMessage) {
+            let messageObject = new _message();
+            let msg = newData.newOtherUserMessage;
+
+            messageObject.id = msg.id;
+            messageObject.chatId = msg.chatId;
+            messageObject.senderId = msg.senderId;
+            messageObject.sender = msg.sender;
+            messageObject.date = msg.date;
+            messageObject.content = msg.content;
+            messageObject.reactions = msg.reactions;
+            messageObject.repliedTo = msg.repliedTo;
+
+            chatTreeCore.fire("message", messageObject);
+
+            // TODO update msgCount?
+        }
+
     });
     observeNewMessages.observe(collectedDOMData, { subtree: true, childList: true });
 }
 document.addEventListener("DOMContentLoaded", () => {
-    refreshMessages();
+    refreshMessages();  // Our extension is loading before DOM head is loaded.
 })
 
 
@@ -146,3 +165,4 @@ function whoIamTalkingto() {
     var url = window.location.pathname;
     return url.slice(3);
 }
+
