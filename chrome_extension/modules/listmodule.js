@@ -12,10 +12,13 @@ chatTreeCore.registerModule("list", {
             div.appendChild(htmlwrap(`<p data-date="${v.date}" data-id="${v.id}">${new _message(v)}</p>`));
         })
     }
-    loadAll();
+    try {
+        loadAll();
+    } catch (e) {
 
+    }
     core.on("message", (msg) => {
-        if (div.querySelector(`[data-id="${msg.id}"]`))return;//dont add message if it already exists.
+        if (div.querySelector(`[data-id="${msg.id}"]`)) return;//dont add message if it already exists.
         for (let i = 0; i < div.children.length; i++) {
             if (Number(div.children[i].dataset.date) > msg.date) {
                 div.insertBefore(htmlwrap(`<p data-date="${msg.date}" data-id="${msg.id}">${new _message(msg)}</p>`), div.children[i]);
