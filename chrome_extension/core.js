@@ -68,6 +68,11 @@ function htmlwrap(html, el) {
     else return d;
 }
 
+function documentReady(f) {
+    if (document.readyState == 'loading') {
+        document.addEventListener("DOMContentLoaded", f);
+    } else f();
+}
 
 function setToChatColor(el, retries = 3) {
     try {
@@ -149,8 +154,8 @@ function _chatTreeCore() {
 
         //Load if we want to load it
         if (this.immediateLoad[moduleName]) while (this.immediateLoad[moduleName].length) {
-            let data=this.immediateLoad[moduleName].pop();
-            this.loadModule(moduleName,data);
+            let data = this.immediateLoad[moduleName].pop();
+            this.loadModule(moduleName, data);
         }
     }
 
@@ -173,7 +178,7 @@ function _chatTreeCore() {
             moving: false
         }
         winds.unload_btn.innerHTML = "&#10060";
-        winds.unload_btn.style.cssText = `height: 15px; width: 15px; right: 10px; position: absolute; text-align: center; font-weight: bold; font-size: 15px;`
+        winds.unload_btn.style.cssText = `height: 15px; width: 15px; right: 20px; position: absolute; text-align: center; font-weight: bold; font-size: 15px;`
         winds.UIsidebutton.appendChild(winds.unload_btn);
         winds.close_btn.style.height = "15px";
         winds.close_btn.style.width = "15px";
@@ -201,14 +206,17 @@ function _chatTreeCore() {
         winds.topbar.style.background = "blue";
         winds.win.appendChild(winds.topbar);
         winds.topbar.addEventListener("mousedown", (e) => { winds.moving = { dx: winds.win.offsetLeft - e.pageX, dy: winds.win.offsetTop - e.pageY } });
-        document.body.appendChild(winds.win);
-        winds.win.parentElement.addEventListener("mousemove", (e) => {
-            if (winds.moving) {
-                winds.win.style.left = e.pageX + winds.moving.dx + "px";
-                winds.win.style.top = e.pageY + winds.moving.dy + "px";
-            }
+        documentReady(() => {
+            document.body.appendChild(winds.win)
+            winds.win.parentElement.addEventListener("mousemove", (e) => {
+                if (winds.moving) {
+                    winds.win.style.left = e.pageX + winds.moving.dx + "px";
+                    winds.win.style.top = e.pageY + winds.moving.dy + "px";
+                }
+            });
+            winds.win.parentElement.addEventListener("mouseup", (e) => { winds.moving = false; });
         });
-        winds.win.parentElement.addEventListener("mouseup", (e) => { winds.moving = false; });
+
 
         var title = htmlwrap(`<div id="chat_tree_header" tabindex="0"><div>${this.availableModules[moduleName].options.prettyName || moduleName}</div></div>`);
         title.style.color = "white";
@@ -353,3 +361,8 @@ window.addEventListener("beforeunload", () => {
     });
     localStorage.setItem("chattreecoredata", JSON.stringify(amlist));
 })
+
+/*chatTreeCore.on("urlChange",()=>{
+    //document.querySelector("._4u-c._1wfr._9hq").style.height=(document.querySelector("[aria-label='New message']").clientHeight-document.querySelector("[aria-label='New message']").clientHeight-document.querySelector("._673w._6ynl").clientHeight)+"px";
+    document.querySelector("._4u-c._4_j9._9hq").style.height=(document.querySelector("._mh6._wsc").clientHeight-document.querySelector("[aria-label='New message']").clientHeight-document.querySelector("._673w._6ynl").clientHeight)+"px";
+})*/

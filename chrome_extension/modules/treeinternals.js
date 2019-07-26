@@ -21,13 +21,14 @@ chatTreeCore.on("message", (msg) => {
         decideTree(chattreedata[chat], msg);
         dealWithNonLocalReplies(chattreedata[chat],msg);
         chattreedata[chat].msgs[msg.id] = msg;
+        chatTreeCore.fire("newMessageAdded",msg);
     }
     
 });
 
 
 function decideTree(tree, newMsg) {
-    if (tree.prevMsg) newMsg.parent = tree.prevMsg;
+    if (tree.prevMsg && tree.msgs[tree.prevMsg] && tree.msgs[tree.prevMsg].date<newMsg.date) newMsg.parent = tree.prevMsg;
     //if you replied to a message, then mark it as a parent
     if (newMsg.repliedTo){
         if (tree.msgs[newMsg.repliedTo])newMsg.parent = newMsg.repliedTo;
