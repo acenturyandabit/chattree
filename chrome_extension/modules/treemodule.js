@@ -160,8 +160,8 @@ chatTreeCore.registerModule("tree", {
         svgCanvas.viewbox(oldViewBox.x - oldViewBox.width * _del, oldViewBox.y - oldViewBox.height * _del, oldViewBox.width * (1 + _del * 2), oldViewBox.height * (1 + _del * 2));
     });
 
-    this.render = function (abstractedNodes) {
-        let _abstractedNodes=JSON.parse(JSON.stringify(abstractedNodes));
+    this.render = function (tree) {
+        let abstractedNodes=JSON.parse(JSON.stringify(tree));
         svgCanvas.clear();
         //determine which layers each element is on
         for (let i in abstractedNodes) {
@@ -230,14 +230,14 @@ chatTreeCore.registerModule("tree", {
             //recurse up the tree and check that we are not making an infinite loop
             //if we are making an infinite loop, then say nope.
             let ce = id;
-            while (_abstractedNodes[ce].parent && _abstractedNodes[ce].parent != ce) {
+            while (abstractedNodes[ce].parent && abstractedNodes[ce].parent != ce) {
                 if (ce.toString() == hotElement.toString()) return;
-                else ce = _abstractedNodes[ce].parent;
+                else ce = abstractedNodes[ce].parent;
             }
             //root case
             if (ce.toString() == hotElement.toString()) return;
-            _abstractedNodes[hotElement].parent = id;
-            userCommit(hotElement, _abstractedNodes[hotElement].parent);
+            abstractedNodes[hotElement].parent = id;
+            userCommit(hotElement, abstractedNodes[hotElement].parent);
             me.render(chattreedata[whoIamTalkingto()].msgs);
         }
         function renderItem(i) {
@@ -319,6 +319,6 @@ chatTreeCore.registerModule("tree", {
     chatTreeCore.on("urlChange,postMessageLoad", () => {
         this.render(chattreedata[whoIamTalkingto()].msgs);
     });
-    this.render(chattreedata[whoIamTalkingto()].msgs);
+    //this.render(chattreedata[whoIamTalkingto()].msgs);
 
 })
