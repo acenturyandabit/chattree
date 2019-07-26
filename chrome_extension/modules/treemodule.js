@@ -238,15 +238,34 @@ chatTreeCore.registerModule("tree", {
             //recurse up the tree and check that we are not making an infinite loop
             //if we are making an infinite loop, then say nope.
             let ce = id;
+            let linkParentAsChild=false;
+            let ceIsRoot=false;
+            let childOfCe=undefined;
             while (abstractedNodes[ce].parent && abstractedNodes[ce].parent != ce) {
-                if (ce.toString() == hotElement.toString()) return;
-                else ce = abstractedNodes[ce].parent;
+                if (ce.toString() == hotElement.toString()){linkParentAsChild=true; break;}
+                else {childOfCe = ce; ce = abstractedNodes[ce].parent;}
             }
             //root case
-            if (ce.toString() == hotElement.toString()) return;
-            abstractedNodes[hotElement].parent = id;
-            userCommit(hotElement, abstractedNodes[hotElement].parent);
-            me.render(chattreedata[whoIamTalkingto()].msgs);
+            if ((!abstractedNodes[ce].parent || abstractedNodes[ce].parent == ce)&&ce==hotElement){
+                ceIsRoot=true; linkParentAsChild=true; }
+            if(linkParentAsChild==false){
+                abstractedNodes[hotElement].parent = id;
+                userCommit(hotElement, abstractedNodes[hotElement].parent);
+                me.render(chattreedata[whoIamTalkingto()].msgs);
+            }else{
+                if(!ceIsRoot){ 
+                    abstractedNodes[childOfCe].parent = abstractedNodes[hotElement].parent; 
+                    abstractedNodes[hotElement].parent = id; 
+                    userCommit(childOfCe, abstractedNodes[childOfCe].parent);
+                    userCommit(ce, abstractedNodes[ce].parent);
+                    me.render(chattreedata[whoIamTalkingto()].msgs); }
+                else{ abstractedNodes[childOfCe].parent = undefined; 
+                    abstractedNodes[ce].parent  = id;
+                    userCommit(childOfCe, abstractedNodes[childOfCe].parent);
+                    userCommit(ce, abstractedNodes[ce].parent);
+                    me.render(chattreedata[whoIamTalkingto()].msgs);
+                }
+            }
         }
         function renderItem(i) {
             let currentElement = abstractedNodeArray[i];
