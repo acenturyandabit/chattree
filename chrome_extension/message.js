@@ -8,6 +8,7 @@ function _message(data) {
     this.content = undefined;
     this.reactions = undefined;
     this.repliedTo = undefined;
+    this.user = undefined;
     // Add more attributes
     
     // if data object provided, load from data
@@ -25,6 +26,7 @@ function _message(data) {
 // Chat Class (through function prototype)
 function _chat() {
     this.id = undefined;
+    this.user = undefined;
     this.isGroup = false;
     this.lastUpdated = undefined;
     this.actors = [];
@@ -66,13 +68,14 @@ function refreshMessages() {
         if (newData.focusChat) {
             //  Load new chat
             let chatObject = new _chat();
-
+     
             chatObject.id = newData.focusChat.id;
             chatObject.isGroup = newData.focusChat.group;
             chatObject.actors = newData.focusChat.actors;
             chatObject.lastUpdated = newData.focusChat.lastUpdated;
             chatObject.name = newData.focusChat.name;
             chatObject.msgCount = newData.focusChat.msgCount;
+            if (newData.currentUser) chatObject.user = newData.currentUser;
 
             chatTreeCore.fire("chat", chatObject);
 
@@ -91,6 +94,7 @@ function refreshMessages() {
                 messageObject.content = msg.content;
                 messageObject.reactions = msg.reactions;
                 messageObject.repliedTo = msg.repliedTo;
+                if (newData.currentUser) messageObject.user = newData.currentUser;
                         
                 chatTreeCore.fire("message", messageObject);
                 messageArray.push(messageObject);
