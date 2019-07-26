@@ -26,6 +26,7 @@ The issues that remain include:
 - When users login / logout on the same device they may be able to see other users' messages
 - With a large number of messages it takes a considerable amount of time to load the chattree.
 - Network timing issues: The current method of fetching chat IDs and fetching messages occasionally results in data mismatch when new threads are loaded.
+- User names need to be implemented!
 
 
 ## Potential user preference
