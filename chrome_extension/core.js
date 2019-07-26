@@ -178,7 +178,7 @@ function _chatTreeCore() {
             moving: false
         }
         winds.unload_btn.innerHTML = "&#10060";
-        winds.unload_btn.style.cssText = `height: 15px; width: 15px; right: 10px; position: absolute; text-align: center; font-weight: bold; font-size: 15px;`
+        winds.unload_btn.style.cssText = `height: 15px; width: 15px; right: 20px; position: absolute; text-align: center; font-weight: bold; font-size: 15px;`
         winds.UIsidebutton.appendChild(winds.unload_btn);
         winds.close_btn.style.height = "15px";
         winds.close_btn.style.width = "15px";
