@@ -238,7 +238,7 @@ chatTreeCore.registerModule("tree", {
             if (ce.toString() == hotElement.toString()) return;
             _abstractedNodes[hotElement].parent = id;
             userCommit(hotElement, _abstractedNodes[hotElement].parent);
-            me.render(chattreedatap[whoIamTalkingto()].msgs);
+            me.render(chattreedata[whoIamTalkingto()].msgs);
         }
         function renderItem(i) {
             let currentElement = abstractedNodeArray[i];
