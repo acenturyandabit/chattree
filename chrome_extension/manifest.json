@@ -7,7 +7,7 @@
         {
             "matches": [
                 "*://www.messenger.com/*",
-                "*://www.facebook.com/messages/t/*"
+                "*://www.facebook.com/messages/*"
             ],
             "js": [
                 "3pt/svg.min.js",
