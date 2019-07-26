@@ -10,6 +10,8 @@ var intercept = function() {
         
         this.lastPayLoad = arguments[0];
         this.addEventListener('load', function() {
+
+            //  Handles batch loading message data AND loading Chat data though 'graphglbatch' requests
             if (this.lastPayLoad && this.lastPayLoad.includes('batch_name=MessengerGraphQLThreadFetcher')) {
                 
                 let endTrim = 0;
@@ -33,6 +35,12 @@ var intercept = function() {
                 focusChat.id = chatId;
                 focusChat.name = jsonResponse.o0.data.message_thread.name;
                 focusChat.group = jsonResponse.o0.data.message_thread.thread_type==="GROUP";
+                focusChat.actors = {};
+                jsonResponse.o0.data.message_thread.all_participants.edges.forEach((actor)=>{
+                    focusChat.actors[actor.node.messaging_actor.id] = {name : "NO_NAME"};
+                    
+                });
+                // SIMPLIFY
                 focusChat.msgCount = jsonResponse.o0.data.message_thread.messages_count;
                 if(jsonResponse.o0.data.message_thread.image)
                     focusChat.image = jsonResponse.o0.data.message_thread.image.uri; // CAN be null
@@ -70,6 +78,50 @@ var intercept = function() {
                     document.body.appendChild(collectedDOMData);
                 } else collectedDOMData = document.getElementById("__collectedData");
                 
+                collectedDOMData.innerText = JSON.stringify(data);
+            }
+
+            // HANDLES new messages sent from the user thorugh 'send/' requests
+            else if (this.lastPayLoad && this.lastPayLoad.includes('client=mercury&action_type=ma-type%3Auser-generated-message')) { // String common to all 'send/' requests
+                
+                // Request body param contains msg content
+                let body = "";
+                if (this.lastPayLoad.match(/&body=(.*?)&/))             //regex
+                    body = this.lastPayLoad.match(/&body=(.*?)&/)[1];
+                    body = decodeURIComponent(body);  // remove URI encoding e.g. %20
+
+                let response = this.response.substring(9);     // remove the unwanted 'for (;;);' at start
+                let jsonResponse = JSON.parse(response);
+                
+                console.info("New Message Sent. JSON:");
+                console.log(jsonResponse);
+
+                // Msg object instantiate
+                let newMsg = new Object();
+                newMsg.id = jsonResponse.payload.actions[0].message_id;
+                newMsg.chatId = jsonResponse.payload.actions[0].thread_fbid || jsonResponse.payload.actions[0].other_user_fbid;
+                newMsg.senderId = undefined; //TODO 
+                newMsg.sender = undefined;
+                newMsg.date = jsonResponse.payload.actions[0].timestamp;
+                newMsg.content = body;
+                newMsg.reactions = undefined;
+                newMsg.repliedTo = undefined; //TODO
+                console.info(`${newMsg.id} Added.`);
+            
+                let data = new Object();
+                data.newUserMessage = newMsg;   //newUserMessage used by message.js
+                
+                // Create DOM element to 'bridge' data to our extension code
+                let collectedDOMData = undefined;
+                if (!document.getElementById("__collectedData")){
+                    collectedDOMData = document.createElement('p');
+                    collectedDOMData.id = '__collectedData';
+                    collectedDOMData.style.height = 0;
+                    collectedDOMData.style.overflow = 'hidden';
+                    document.body.appendChild(collectedDOMData);
+                } else collectedDOMData = document.getElementById("__collectedData");
+                
+                // JSON the new data
                 collectedDOMData.innerText = JSON.stringify(data);
             }               
         });
