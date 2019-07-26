@@ -8,7 +8,7 @@ chatTreeCore.on("chat", (chat) => {
     //check for uniquenesss
     //replace with 'whoamitalkingto' because browser doesnt know.
     if (chattreedata[whoIamTalkingto()] == undefined) {
-        chattreedata[whoIamTalkingto()] = chat;
+        chattreedata[whoIamTalkingto()] = chat;     //TODO Check
     }
     //create if doesnt exist.
 });
