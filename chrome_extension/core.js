@@ -91,7 +91,7 @@ function _chatTreeCore() {
 
     setInterval(() => {
         managedSidebarItems.forEach((v, i) => {
-            if (v.careColor){
+            if (v.careColor) {
                 setToChatColor(v.careColor);
             }
             if (v.element.getRootNode() != document) {
@@ -102,7 +102,7 @@ function _chatTreeCore() {
                 }
             }
         })
-    },300);
+    }, 300);
 
 
 
@@ -122,8 +122,8 @@ function _chatTreeCore() {
     creationBars.style.display = "none";
     //<div class="_3szq">Chattree settings</div>
     UIsidebutton.addEventListener("click", () => { creationBars.style.display = (creationBars.style.display == "block") ? "none" : "block"; });
-    managedSidebarItems.push({careColor:UIsidebutton,element:UIsidebutton});
-    managedSidebarItems.push({element:creationBars});
+    managedSidebarItems.push({ careColor: UIsidebutton, element: UIsidebutton });
+    managedSidebarItems.push({ element: creationBars });
 
 
     /**
@@ -223,28 +223,7 @@ function _chatTreeCore() {
         * continuously check if the button in the side bar alredy exist
         *if no, add "chat tree"/"item list" button at the end of the side bar
         */
-       managedSidebarItems.push({element:UIsidebutton,careColor:winds.topbar});
-
-        /*
-        *function to unload module of unload button on the side bar is clicked
-        */
-        function unloadModule(winds) {
-            //remove the item from the managed sidebar.
-            for (let i=0;i<managedSidebarItems.length;i++){
-                if (managedSidebarItems[i].element==UIsidebutton){
-                    managedSidebarItems.splice(i,1);
-                    break;
-                }
-            }
-            for (var idx in winds) {
-                if (idx != "moving") {
-                    winds[idx].remove();
-                }
-            }
-        }
-        winds.unload_btn.addEventListener("click", () => { unloadModule(winds) });
-
-
+        managedSidebarItems.push({ element: UIsidebutton, careColor: winds.topbar });
 
         var window_status = 0;//By default, the window is visible=0
         /*
@@ -288,11 +267,12 @@ function _chatTreeCore() {
         winds.inner.style.overflow = "auto";
         winds.inner.style.width = "100%";
         winds.win.appendChild(winds.inner);
-        this.activeModules.push({
+        let activeModuleObject = {
             type: moduleName,
             module: new this.availableModules[moduleName].fn(this, winds.inner),
             winds: winds
-        });
+        };
+        this.activeModules.push(activeModuleObject);
 
         winds.close_btn.addEventListener("click", UIshowwindow);
         winds.resize_btn.addEventListener("click", UIfullscreen);
@@ -303,6 +283,32 @@ function _chatTreeCore() {
             winds.win.style.zIndex = 301;
         }
         winds.win.addEventListener("mousedown", clickon);
+        /*
+        *function to unload module of unload button on the side bar is clicked
+        */
+        function unloadModule(winds) {
+            //remove the item from the managed sidebar.
+            for (let i = 0; i < managedSidebarItems.length; i++) {
+                if (managedSidebarItems[i].element == UIsidebutton) {
+                    managedSidebarItems.splice(i, 1);
+                    break;
+                }
+            }
+            //remove the item from the activemodules so it is not saved
+            for (let i = 0; i < me.activeModules.length; i++) {
+                if (me.activeModules[i] == activeModuleObject) {
+                    me.activeModules.splice(i, 1);
+                    break;
+                }
+            }
+            for (var idx in winds) {
+                if (idx != "moving") {
+                    winds[idx].remove();
+                }
+            }
+
+        }
+        winds.unload_btn.addEventListener("click", () => { unloadModule(winds) });
     }
     this.loadFrom = function (arr) {
         //wait 0.5s for everything to settle down (this could be a loooot better)
@@ -315,6 +321,8 @@ function _chatTreeCore() {
 }
 
 let chatTreeCore = new _chatTreeCore();
+
+
 
 chatTreeCore.loadFrom(JSON.parse(localStorage.getItem("chattreecoredata") || "[]"));
 

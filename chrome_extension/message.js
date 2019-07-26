@@ -1,5 +1,5 @@
 // Message Class (through function prototype)
-function _message() {
+function _message(data) {
     this.id = undefined;
     this.chatId = undefined;
     this.senderId = undefined; 
@@ -9,6 +9,11 @@ function _message() {
     this.reactions = undefined;
     this.repliedTo = undefined;
     // Add more attributes
+    
+    // if data object provided, load from data
+    if (data){
+        Object.assign(this,data);
+    }
 
     this.toString = function () {
         return "Message " + this.id + " from chat " + this.chatId
