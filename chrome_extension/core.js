@@ -104,8 +104,12 @@ function _chatTreeCore() {
     setInterval(() => {
         if (UIsidebutton.getRootNode() != document) {
             setToChatColor(UIsidebutton);
-            document.querySelector("._1li_").appendChild(UIsidebutton);
-            document.querySelector("._1li_").appendChild(creationBars);
+            try {
+                document.querySelector("._1li_").appendChild(UIsidebutton);
+                document.querySelector("._1li_").appendChild(creationBars);
+            } catch (e) {
+
+            }
         }
     }, 300)
 
@@ -133,7 +137,7 @@ function _chatTreeCore() {
         })
 
         //Load if we want to load it
-        while (this.immediateLoad[moduleName]){
+        while (this.immediateLoad[moduleName]) {
             this.loadModule(moduleName);
             this.immediateLoad[moduleName]--;
         }
@@ -203,7 +207,7 @@ function _chatTreeCore() {
         //now windows are created 
 
         UIsidebutton.addEventListener("click", UIshowwindow);
-        
+
         /*
         * continuously check if the button in the side bar alredy exist
         *if no, add "chat tree"/"item list" button at the end of the side bar
@@ -223,7 +227,7 @@ function _chatTreeCore() {
         /*
         *function to unload module of unload button on the side bar is clicked
         */
-        function unloadModule(winds){
+        function unloadModule(winds) {
             clearInterval(pid);
             for (var idx in winds) {
                 if (idx != "moving") {
@@ -234,7 +238,7 @@ function _chatTreeCore() {
         winds.unload_btn.addEventListener("click", () => { unloadModule(winds) });
 
 
-       
+
         var window_status = 0;//By default, the window is visible=0
         /*
         * adjust windows visibility
@@ -243,7 +247,7 @@ function _chatTreeCore() {
             if (window_status == 0) { winds.win.style.visibility = 'hidden'; window_status = 1; }
             else { winds.win.style.visibility = 'visible'; window_status = 0; }
         }
-        
+
         //maximise window
         var originalwindow_height;
         var originalwindow_width;
@@ -295,9 +299,9 @@ function _chatTreeCore() {
     }
     this.loadFrom = function (arr) {
         //wait 0.5s for everything to settle down (this could be a loooot better)
-        this.immediateLoad={};
+        this.immediateLoad = {};
         arr.forEach((v) => {
-            if (!this.immediateLoad[v])this.immediateLoad[v]=0;
+            if (!this.immediateLoad[v]) this.immediateLoad[v] = 0;
             this.immediateLoad[v]++;
         })
     }
