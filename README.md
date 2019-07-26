@@ -1,5 +1,5 @@
 # Chat Tree
-By Christie Zhu, Eliza Smedley, Lewis Watts and Steven Liu, 2019.
+By Christie Zhu, Lewis Watts, Steven Liu and Eliza Smedley, 2019.
 ## What is it?
 Chat Tree is a chrome extension for visualising Messenger chats in a tree-like format. 
 It also happens to contain a powerful set of functions to access and listen to messages in Messenger!
@@ -24,4 +24,4 @@ The issues that remain include:
 
 - Some sizing issues with new buttons on the sidebar: after more than 3 sidebars the window starts shifting around uncomfortably
 - When users login / logout on the same device they may be able to see other users' messages
-- 
+- With a large number of messages it takes a considerable amount of time to load the chattree.

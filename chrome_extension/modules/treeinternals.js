@@ -27,7 +27,7 @@ chatTreeCore.on("message", (msg) => {
 
 
 function decideTree(tree, newMsg) {
-    if (tree.prevMsg && tree.msgs[tree.prevMsg].date<newMsg.date) newMsg.parent = tree.prevMsg;
+    if (tree.prevMsg && tree.msgs[tree.prevMsg] && tree.msgs[tree.prevMsg].date<newMsg.date) newMsg.parent = tree.prevMsg;
     //if you replied to a message, then mark it as a parent
     if (newMsg.repliedTo){
         if (tree.msgs[newMsg.repliedTo])newMsg.parent = newMsg.repliedTo;
