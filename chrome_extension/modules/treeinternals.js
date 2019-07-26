@@ -19,23 +19,37 @@ chatTreeCore.on("message", (msg) => {
     //only add new if adding new
     if (!chattreedata[chat].msgs[msg.id]) {
         decideTree(chattreedata[chat], msg);
+        dealWithNonLocalReplies(chattreedata[chat],msg);
         chattreedata[chat].msgs[msg.id] = msg;
     }
+    
 });
 
 
 function decideTree(tree, newMsg) {
     if (tree.prevMsg) newMsg.parent = tree.prevMsg;
     //if you replied to a message, then mark it as a parent
-    if (newMsg.repliedTo && tree.msgs[newMsg.repliedTo]) newMsg.parent = newMsg.repliedTo;
+    if (newMsg.repliedTo){
+        if (tree.msgs[newMsg.repliedTo])newMsg.parent = newMsg.repliedTo;
+        else newMsg.notYetReplied=true;
+    } 
     tree.prevMsg = newMsg.id;
     //currently linear
 }
 
 
+function dealWithNonLocalReplies(tree,newMsg){
+    for (let i in tree){
+        if (tree[i].notYetReplied && tree[i].repliedTo==newMsg.id){
+            tree[i].parent=newMsg.id;
+        }
+    }
+}
+
 function userCommit(key, data) {//writing user changes.
 
     chattreedata[whoIamTalkingto()].msgs[key].parent = data;
+    chattreedata[whoIamTalkingto()].msgs[key].notYetReplied=false; //user parent takes priority
 }
 
 window.addEventListener("beforeunload",()=>{
