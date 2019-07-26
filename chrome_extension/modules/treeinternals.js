@@ -39,7 +39,7 @@ function decideTree(tree, newMsg) {
 
 
 function dealWithNonLocalReplies(tree,newMsg){
-    for (let i in tree){
+    for (let i in tree.msgs){
         if (tree.msgs[i].notYetReplied && tree.msgs[i].repliedTo==newMsg.id){
             tree.msgs[i].parent=newMsg.id;
         }
