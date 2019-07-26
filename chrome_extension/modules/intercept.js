@@ -88,9 +88,9 @@ var intercept = function() {
                 let body = "";
                 if (this.lastPayLoad.match(/&body=(.*?)&/))             //regex
                     body = this.lastPayLoad.match(/&body=(.*?)&/)[1];
+                    body = decodeURIComponent(body);  // remove URI encoding e.g. %20
 
                 let response = this.response.substring(9);     // remove the unwanted 'for (;;);' at start
-                response = decodeURIComponent(response);  // remove URI encoding e.g. %20
                 let jsonResponse = JSON.parse(response);
                 
                 console.info("New Message Sent. JSON:");
