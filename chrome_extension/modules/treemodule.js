@@ -10,9 +10,91 @@ function makeTree() {
     }
     return nodes;
 }
+/**
+ * Converts an RGB color value to HSL. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+ * Assumes r, g, and b are contained in the set [0, 255] and
+ * returns h, s, and l in the set [0, 1].
+ *
+ * @param   Number  r       The red color value
+ * @param   Number  g       The green color value
+ * @param   Number  b       The blue color value
+ * @return  Array           The HSL representation
+ */
+function rgbToHsl(r, g, b) {
+    if (typeof r == "string" && g == undefined && b == undefined) {
+        //allow us to take in an rgba string value.
+        let cols = /rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i.exec(r);
+        r = parseInt(('' + cols[1]).replace(/\s/g, ''), 10);
+        g = parseInt(('' + cols[2]).replace(/\s/g, ''), 10);
+        b = parseInt(('' + cols[2]).replace(/\s/g, ''), 10);
+    }
+  r /= 255, g /= 255, b /= 255;
 
-function hashColor (obj) {
-    var str=JSON.stringify(obj);
+  var max = Math.max(r, g, b), min = Math.min(r, g, b);
+  var h, s, l = (max + min) / 2;
+
+  if (max == min) {
+    h = s = 0; // achromatic
+  } else {
+    var d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+
+    h /= 6;
+  }
+
+  return { h:h, s:s, l:l};
+}
+
+/**
+ * Converts an HSL color value to RGB. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+ * Assumes h, s, and l are contained in the set [0, 1] and
+ * returns r, g, and b in the set [0, 255].
+ *
+ * @param   Number  h       The hue
+ * @param   Number  s       The saturation
+ * @param   Number  l       The lightness
+ * @return  Array           The RGB representation
+ */
+function hslToRgb(h, s, l) {
+    if (arguments.length === 1) {
+        s = h.s, v = h.v, l = h.l;
+    }
+  var r, g, b;
+
+  if (s == 0) {
+    r = g = b = l; // achromatic
+  } else {
+    function hue2rgb(p, q, t) {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    }
+
+    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    var p = 2 * l - q;
+
+    r = hue2rgb(p, q, h + 1/3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1/3);
+  }
+  let ret={r:Math.round(r * 255), g:Math.round(g * 255), b:Math.round (b * 255)};
+  ret.str=`rgb(${ret.r},${ret.g},${ret.b})`;
+  return ret;
+}
+
+function hashColor(obj) {
+    var str = JSON.stringify(obj);
     var hash = 0, i, chr;
     if (str.length === 0) return hash;
     for (i = 0; i < str.length; i++) {
@@ -20,9 +102,9 @@ function hashColor (obj) {
         hash = ((hash << 5) - hash) + chr;
         hash |= 0; // Convert to 32bit integer
     }
-    hash=Math.abs(hash);
-    hash %=2**24;//Convert to 24 bit integer
-    return `rgb(${((hash)&(255<<16))>>16},${((hash)&(255<<8))>>8},${hash&255})`;
+    hash = Math.abs(hash);
+    hash %= 2 ** 24;//Convert to 24 bit integer
+    return `rgb(${((hash) & (255 << 16)) >> 16},${((hash) & (255 << 8)) >> 8},${hash & 255})`;
 };
 
 function matchContrast(col) {
@@ -79,7 +161,7 @@ chatTreeCore.registerModule("tree", {
     });
 
     this.render = function (abstractedNodes) {
-        let _abstractedNodes = JSON.parse(JSON.stringify(abstractedNodes));
+        let _abstractedNodes=abstractedNodes;
         svgCanvas.clear();
         //determine which layers each element is on
         for (let i in abstractedNodes) {
@@ -135,13 +217,14 @@ chatTreeCore.registerModule("tree", {
         let hotElement;
         function setHotElement(id) {
             hotElement = id;
-            abstractedNodeArray[refIndexes.indexOf(id)].rect.fill("darkblue");
+            abstractedNodeArray[refIndexes.indexOf(id)].rect.stroke({color:"red",width:3});
         }
         function linkElement(id) {
             //also allow for deselection
             if (id == hotElement) {
                 hotElement = undefined;
-                abstractedNodeArray[refIndexes.indexOf(id)].rect.fill("blue");
+                let usrHashCol = hashColor(abstractedNodeArray[refIndexes.indexOf(id)].senderId);
+                abstractedNodeArray[refIndexes.indexOf(id)].rect.stroke({color:matchContrast(usrHashCol),width:1});
                 return;
             }
             //recurse up the tree and check that we are not making an infinite loop
@@ -154,7 +237,7 @@ chatTreeCore.registerModule("tree", {
             //root case
             if (ce.toString() == hotElement.toString()) return;
             _abstractedNodes[hotElement].parent = id;
-            userCommit(hotElement,_abstractedNodes);
+            userCommit(hotElement, _abstractedNodes[hotElement].parent);
             me.render(_abstractedNodes);
         }
         function renderItem(i) {
@@ -166,7 +249,7 @@ chatTreeCore.registerModule("tree", {
             });
             let placeX = 0;
             //Create some text in the box
-            let usrHashCol=hashColor(abstractedNodes[currentElement.key].senderId);
+            let usrHashCol = hashColor(abstractedNodes[currentElement.key].senderId);
             let text = currentElement.groupElement.text((abstractedNodes[currentElement.key].content || currentElement.key).toString()).cy(0).stroke(matchContrast(usrHashCol)).size(10);
             currentElement.estimatedWidth = text.bbox().w + 10;
             if (children.length) {
@@ -199,7 +282,7 @@ chatTreeCore.registerModule("tree", {
                 reMoveBox = true;
             }
             //create a box for it
-            currentElement.rect = currentElement.groupElement.rect(text.bbox().w + 10, height).cx(placeX).cy(0).fill(usrHashCol).stroke({color:matchContrast(usrHashCol),width:1}).click(() => {
+            currentElement.rect = currentElement.groupElement.rect(text.bbox().w + 10, height).cx(placeX).cy(0).fill(usrHashCol).stroke({ color: matchContrast(usrHashCol), width: 1 }).click(() => {
                 if (hotElement) {
                     linkElement(currentElement.key);
                 } else {
