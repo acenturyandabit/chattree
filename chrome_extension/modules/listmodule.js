@@ -3,13 +3,13 @@ chatTreeCore.registerModule("list", {
 }, function (core, div) {
     function loadAll() {
         for (let i in chattreedata[whoIamTalkingto()].msgs) {
-            div.appendChild(htmlwrap(`<p>${chattreedata[whoIamTalkingto()].msgs[i].toString()}</p>`));
+            div.appendChild(htmlwrap(`<p>${new _message(chattreedata[whoIamTalkingto()].msgs[i]).toString()}</p>`));
         }
     }
     loadAll();
 
     core.on("message", (msg) => {
-        div.appendChild(htmlwrap(`<p>${msg.toString()}</p>`));
+        div.appendChild(htmlwrap(`<p>${msg}</p>`));
     })
     chatTreeCore.on("urlChange", () => {
         while (div.children.length) {

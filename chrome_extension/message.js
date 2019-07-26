@@ -1,5 +1,5 @@
 // Message Class (through function prototype)
-function _message() {
+function _message(data) {
     this.id = undefined;
     this.chatId = undefined;
     this.senderId = undefined; 
@@ -9,6 +9,11 @@ function _message() {
     this.reactions = undefined;
     this.repliedTo = undefined;
     // Add more attributes
+    
+    // if data object provided, load from data
+    if (data){
+        Object.assign(this,data);
+    }
 
     this.toString = function () {
         return "Message " + this.id + " from chat " + this.chatId
@@ -22,6 +27,7 @@ function _chat() {
     this.id = undefined;
     this.isGroup = false;
     this.lastUpdated = undefined;
+    this.actors = [];
     this.name = undefined;
     this.msgCount = undefined;
     // Add more attributes
@@ -56,40 +62,62 @@ function refreshMessages() {
         let newData = JSON.parse(mutationList[0].target.innerHTML);
         console.log(newData);
 
-        //  Load new chat
-        let chatObject = new _chat();
+        // Check if loading batch of messages. The focusChat is collected only for batch loading.
+        if (newData.focusChat) {
+            //  Load new chat
+            let chatObject = new _chat();
 
-        chatObject.id = newData.focusChat.id;
-        chatObject.isGroup = newData.focusChat.group;
-        chatObject.lastUpdated = newData.focusChat.lastUpdated;
-        chatObject.name = newData.focusChat.name;
-        chatObject.msgCount = newData.focusChat.msgCount;
+            chatObject.id = newData.focusChat.id;
+            chatObject.isGroup = newData.focusChat.group;
+            chatObject.actors = newData.focusChat.actors;
+            chatObject.lastUpdated = newData.focusChat.lastUpdated;
+            chatObject.name = newData.focusChat.name;
+            chatObject.msgCount = newData.focusChat.msgCount;
 
-        chatTreeCore.fire("chat", chatObject);
+            chatTreeCore.fire("chat", chatObject);
 
-        // Load new messages
-        let messageArray=[];
-        
-        newData.focusMessages.forEach( (msg)=> {
-            //  Make a new Messasge Object and assign it to the recieved JSON values
+            // Load new messages
+            let messageArray=[];
+            
+            newData.focusMessages.forEach( (msg)=> {
+                //  Make a new Messasge Object and assign it to the recieved JSON values
+                let messageObject = new _message();
+
+                messageObject.id = msg.id;
+                messageObject.chatId = msg.chatId;
+                messageObject.senderId = msg.senderId;
+                messageObject.sender = msg.sender;
+                messageObject.date = msg.date;
+                messageObject.content = msg.content;
+                messageObject.reactions = msg.reactions;
+                messageObject.repliedTo = msg.repliedTo;
+                        
+                chatTreeCore.fire("message", messageObject);
+                messageArray.push(messageObject);
+            });
+
+            console.log(messageArray);
+            // TODO CODE HERE
+            chatTreeCore.fire("postMessageLoad",messageArray);
+        }
+    // OR check for new user message
+        else if (newData.newUserMessage) {
             let messageObject = new _message();
+            let msg = newData.newUserMessage;
 
             messageObject.id = msg.id;
             messageObject.chatId = msg.chatId;
             messageObject.senderId = msg.senderId;
-            messageObject.sender = undefined;
+            messageObject.sender = msg.sender;
             messageObject.date = msg.date;
             messageObject.content = msg.content;
             messageObject.reactions = msg.reactions;
             messageObject.repliedTo = msg.repliedTo;
                     
             chatTreeCore.fire("message", messageObject);
-            messageArray.push(messageObject);
-        });
 
-        console.log(messageArray);
-        // TODO CODE HERE
-        chatTreeCore.fire("postMessageLoad",messageArray);
+            // TODO update msgCount?
+        }
     });
     observeNewMessages.observe(collectedDOMData, { subtree: true, childList: true });
 }
