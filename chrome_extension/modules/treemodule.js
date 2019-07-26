@@ -161,7 +161,7 @@ chatTreeCore.registerModule("tree", {
     });
 
     this.render = function (abstractedNodes) {
-        let _abstractedNodes=abstractedNodes;
+        let _abstractedNodes=JSON.parse(JSON.stringify(abstractedNodes));
         svgCanvas.clear();
         //determine which layers each element is on
         for (let i in abstractedNodes) {
@@ -238,7 +238,7 @@ chatTreeCore.registerModule("tree", {
             if (ce.toString() == hotElement.toString()) return;
             _abstractedNodes[hotElement].parent = id;
             userCommit(hotElement, _abstractedNodes[hotElement].parent);
-            me.render(_abstractedNodes);
+            me.render(chattreedatap[whoIamTalkingto()].msgs);
         }
         function renderItem(i) {
             let currentElement = abstractedNodeArray[i];

@@ -132,7 +132,11 @@ function _chatTreeCore() {
             creationBars.style.display = "none";
         })
 
-        //for now, immediately load the module
+        //Load if we want to load it
+        while (this.immediateLoad[moduleName]){
+            this.loadModule(moduleName);
+            this.immediateLoad[moduleName]--;
+        }
     }
 
 
@@ -288,11 +292,11 @@ function _chatTreeCore() {
     }
     this.loadFrom = function (arr) {
         //wait 0.5s for everything to settle down (this could be a loooot better)
-        setTimeout(() => {
-            arr.forEach((v) => {
-                me.loadModule(v);
-            })
-        }, 500);
+        this.immediateLoad={};
+        arr.forEach((v) => {
+            if (!this.immediateLoad[v])this.immediateLoad[v]=0;
+            this.immediateLoad[v]++;
+        })
     }
 }
 
