@@ -21,6 +21,7 @@ chatTreeCore.on("message", (msg) => {
         decideTree(chattreedata[chat], msg);
         dealWithNonLocalReplies(chattreedata[chat],msg);
         chattreedata[chat].msgs[msg.id] = msg;
+        chatTreeCore.fire("newMessageAdded",msg);
     }
     
 });

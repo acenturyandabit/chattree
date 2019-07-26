@@ -426,9 +426,12 @@ documentReady(() => {
         let renc=new capacitor(300,1000,()=>{
             try { this.render(chattreedata[whoIamTalkingto()].msgs) } catch (e) { };
         })
-        chatTreeCore.on("urlChange,postMessageLoad", () => {
+        chatTreeCore.on("urlChange,postMessageLoad,newMessageAdded", () => {
             renc.submit();
         });
+        chatTreeCore.on("urlChange",()=>{
+            svgCanvas.viewbox(-svgCanvasDiv.clientWidth/2,0,svgCanvasDiv.clientWidth,svgCanvasDiv.clientHeight);
+        })
         renc.submit();
         
 
