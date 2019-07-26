@@ -238,20 +238,21 @@ chatTreeCore.registerModule("tree", {
                 else {childOfCe = ce; ce = abstractedNodes[ce].parent;}
             }
             //root case
-            if (ce.toString() == hotElement.toString()){linkParentAsChild=true; ceIsRoot=true;}
+            if (!abstractedNodes[ce].parent || abstractedNodes[ce].parent == ce){
+                ceIsRoot=true; linkParentAsChild=true; }
             if(linkParentAsChild==false){
                 abstractedNodes[hotElement].parent = id;
                 userCommit(hotElement, abstractedNodes[hotElement].parent);
                 me.render(chattreedata[whoIamTalkingto()].msgs);
             }else{
                 if(!ceIsRoot){ 
-                    abstractedNodes[childOfCe].parent = hotElement.parent; 
+                    abstractedNodes[childOfCe].parent = abstractedNodes[hotElement].parent; 
                     abstractedNodes[hotElement].parent = id; 
                     userCommit(childOfCe, abstractedNodes[childOfCe].parent);
                     userCommit(ce, abstractedNodes[ce].parent);
                     me.render(chattreedata[whoIamTalkingto()].msgs); }
                 else{ abstractedNodes[childOfCe].parent = undefined; 
-                    abstractedNodes[hotElement].parent  = id;
+                    abstractedNodes[ce].parent  = hotElement;
                     userCommit(childOfCe, abstractedNodes[childOfCe].parent);
                     userCommit(ce, abstractedNodes[ce].parent);
                     me.render(chattreedata[whoIamTalkingto()].msgs);
