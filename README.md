@@ -17,4 +17,11 @@ If you've noticed a bug, feel free to open an issue or submit a pull request!
 Alternatively, you can code your own module based on the template file in `modules/template.js`.
 
 ## Remaining issues
+
 Sadly we couldn't squash all the bugs that were in the project, though we got pretty far!
+
+The issues that remain include:
+
+- Some sizing issues with new buttons on the sidebar: after more than 3 sidebars the window starts shifting around uncomfortably
+- When users login / logout on the same device they may be able to see other users' messages
+- 
