@@ -9,7 +9,7 @@
  */
 chatTreeCore.registerModule("module_name",{
     prettyName:"Name of the module you want to see."
-}, function (div) {
+}, function (core, div) {
     //For more information on chatTreeCore's event firing, check out the core.js file.
     /**
      * div: a HTMLElement that represents the window space allocated to your module.
@@ -18,7 +18,7 @@ chatTreeCore.registerModule("module_name",{
         //A new message has been recieved! 
         //For messagedata reference, check message.js.
     });
-    chatTreeCore.on("urlChange", () => {
+    chatTreeCore.on("urlChange", (new_url) => {
         //Load a new message set due to changing URL.
     })
 })
